@@ -1,0 +1,10 @@
+interface pmd901_if;
+  logic clk;
+  logic csn;
+  logic mosi;
+  logic bend;
+  logic fault;
+  logic fan;
+  logic ready;
+  logic park;
+endinterface: pmd901_if
