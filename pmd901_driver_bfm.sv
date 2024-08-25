@@ -1,8 +1,9 @@
 interface pmd901_driver_bfm (
   input logic clk,
-  input logic cs,
+  input logic csn,
   input logic bend,
   input logic park,
+
   output logic mosi,
   output logic fault,
   output logic fan,
@@ -16,6 +17,7 @@ endclocking: drv_cb
 `include "uvm_macros.svh"
 import uvm_pkg::*;
 import pmd901_agent_pkg::*;
+import pmd901_agent_dec::*;
 
 //------------------------------------------
 // Data Members
@@ -25,41 +27,33 @@ import pmd901_agent_pkg::*;
 // Methods
 //------------------------------------------
 
-task wait_csn_isknown();
-  while(csn === 1'hx) begin
+task wait_inputs_isknown();
+  while(csn === 1'hx || park === 1'hx || bend === 1'hx) begin
     #1;
   end
-endtask : wait_csn_isknown
+endtask : wait_inputs_isknown
 
-task setup_phase(pmd901_seq_item req);
+task setup_phase(pmd901_trans req);
 endtask: setup_phase
 
+function automatic work_status_e get_work_status();
+    case({park, bend})
+        2'b0?: return pmd901_agent_dec::POWER_DOWN;
+        2'b10: return pmd901_agent_dec::NORMAL_WORKING;
+        2'b11: return pmd901_agent_dec::BENDING_WORKING;
+        default: return pmd901_agent_dec::POWER_DOWN;
+    endcase
+endfunction
 
-
-task setup_phase(ref spi_seq_item req);
-  int no_bits;
-  
-  while(cs == 8'hff) begin
-    @(cs);
-  end
-  `uvm_info("SPI_DRV_RUN:", $sformatf("Starting transmission: %0h RX_NEG State %b, no of bits %0d", req.spi_data, req.RX_NEG, req.no_bits), UVM_LOW)
-  no_bits = req.no_bits;
-  if(no_bits == 0) begin
-    no_bits = 128;
-  end
-  miso <= req.spi_data[0];
-  for(int i = 1; i < no_bits-1; i++) begin
-    if(req.RX_NEG == 1) begin
-      @(posedge clk);
-    end
-    else begin
-      @(negedge clk);
-    end
-    miso <= req.spi_data[i];
-    if(cs == 8'hff) begin
-      break;
-    end
-  end
+task setup_phase(ref pm901_trans req);
+    // if device is not powered up, then we wait
+    // for it, since there's no intrest to transmit 
+    // a powered down PMD901 transaction
+    wait(park == 1'b1);
+    // wait for csn pulled down to initiate a 
+    // SPI transmit
+    @(negedge csn);
+    req.work_status = get_work_status();
 endtask : setup_phase 
   
 endinterface: pmd901_driver_bfm
