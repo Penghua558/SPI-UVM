@@ -42,6 +42,10 @@ property csnsetup;
  first_match(##[1:$]($fell(csn))) ##0 (($realtime - current_time) >= 20us);
 endproperty
 
+property clocknumber;
+    @(posedge clk) !csn |-> !csn[*16] ##0 $rose(csn);
+endproperty
+
 assert property (csnhold)
 else
     `uvm_fatal("PMD901 MONITOR BFM", "CS_N hold time check failed!")
@@ -49,5 +53,9 @@ else
 assert property (csnsetup)
 else
     `uvm_fatal("PMD901 MONITOR BFM", "CS_N setup time check failed!")
+
+assert property (clocknumber)
+else
+    `uvm_fatal("PMD901 MONITOR BFM", "Clock cycle number is not 16 during data transmission!")
 
 endinterface: pmd901_monitor_bfm

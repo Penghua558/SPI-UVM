@@ -23,6 +23,8 @@ endclass: pmd901_trans
 function pmd901_trans::new(string name = "pmd901_trans");
     super.new(name);
     work_status = pmd901_agent_dec::POWER_DOWN;
+    spi_violated = 1'b0;
+    spi_ready = 1'b1;
 endfunction
 
 function void pmd901_trans::do_copy(uvm_object rhs);

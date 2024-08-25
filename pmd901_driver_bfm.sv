@@ -3,8 +3,8 @@ interface pmd901_driver_bfm (
   input logic csn,
   input logic bend,
   input logic park,
+  input logic mosi,
 
-  output logic mosi,
   output logic fault,
   output logic fan,
   output logic ready
@@ -53,6 +53,19 @@ task setup_phase(ref pm901_trans req);
     // wait for csn pulled down to initiate a 
     // SPI transmit
     @(negedge csn);
+
+    fork
+        begin
+            @(posedge csn);
+        end
+        forever begin: sample_data
+            @(posedge clk);
+            req.speed << 1;
+            req.speed[0] = mosi;
+        end
+    join_any
+    disable fork;
+
     req.work_status = get_work_status();
 endtask : setup_phase 
   
