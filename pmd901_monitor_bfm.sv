@@ -36,4 +36,18 @@ property csnhold;
  first_match(##[1:$]($fell(clk) or $rose(clk))) ##0 (($realtime - current_time) >= 0.4us);
 endproperty
 
+property csnsetup;
+ realtime current_time;
+  ($rose(csn),current_time=$realtime) |=>
+ first_match(##[1:$]($fell(csn))) ##0 (($realtime - current_time) >= 20us);
+endproperty
+
+assert property (csnhold)
+else
+    `uvm_fatal("PMD901 MONITOR BFM", "CS_N hold time check failed!")
+
+assert property (csnsetup)
+else
+    `uvm_fatal("PMD901 MONITOR BFM", "CS_N setup time check failed!")
+
 endinterface: pmd901_monitor_bfm
