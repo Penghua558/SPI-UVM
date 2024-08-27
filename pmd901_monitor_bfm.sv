@@ -42,8 +42,31 @@ property csnsetup;
  first_match(##[1:$]($fell(csn))) ##0 (($realtime - current_time) >= 20us);
 endproperty
 
+event spi_clk_event;
+bit seq_start;
+initial begin
+forever begin
+    fork
+        begin
+            @(negedge cs_n);
+            seq_start = 1'b1;
+        end
+        begin
+            @(posedge cs_n);
+            seq_start = 1'b0;
+        end
+        begin
+            @(posedge clk);
+            seq_start = 1'b0;
+        end
+    join_any
+    disable fork;
+    -> spi_clk_event;
+end
+end
+
 property clocknumber;
-    @(posedge clk) !csn |-> !csn[*16] ##0 $rose(csn);
+    @(spi_clk_event) seq_start |=> !csn[*16] ##1 !$rose(clk);
 endproperty
 
 assert property (csnhold)
