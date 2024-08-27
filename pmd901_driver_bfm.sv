@@ -68,5 +68,11 @@ task setup_phase(ref pm901_trans req);
 
     req.work_status = get_work_status();
 endtask : setup_phase 
+
+task access_phase(pmd901_trans rsp);
+    fan = rsp.close2overheat;
+    ready = rsp.overheat;
+    fault = rsp.spi_violated;
+endtask
   
 endinterface: pmd901_driver_bfm

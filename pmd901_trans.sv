@@ -4,10 +4,10 @@ class pmd901_trans extends uvm_sequence_item;
 `uvm_object_utils(pmd901_trans)
 
 pmd901_agent_dec::work_status_e work_status;
-bit spi_violated;
 bit spi_ready;
 signed bit[15:0] speed;
 
+rand bit spi_violated;
 rand bit overheat;
 rand bit close2overheat;
 
@@ -18,6 +18,10 @@ extern function bit do_compare(uvm_object rhs, uvm_comparer comparer);
 extern function string convert2string();
 extern function void do_print(uvm_printer printer);
 // extern function void do_record(uvm_recorder recorder);
+
+extern constraint overheat_cons;
+extern constraint close2overheat_cons;
+extern constraint spi_violated_cons;
 endclass: pmd901_trans
 
 function pmd901_trans::new(string name = "pmd901_trans");
@@ -26,6 +30,27 @@ function pmd901_trans::new(string name = "pmd901_trans");
     spi_violated = 1'b0;
     spi_ready = 1'b1;
 endfunction
+
+constraint pmd901_trans::overheat_cons{
+    overheat dist {
+        1'b0:/ 97,
+        1'b1:/ 3
+    };
+}
+
+constraint pmd901_trans::close2overheat_cons{
+    close2overheat dist {
+        1'b0:/ 97,
+        1'b1:/ 3
+    };
+}
+
+constraint pmd901_trans::spi_violated_cons{
+    spi_violated dist {
+        1'b0:/ 97,
+        1'b1:/ 3
+    };
+}
 
 function void pmd901_trans::do_copy(uvm_object rhs);
   spi_seq_item rhs_;
