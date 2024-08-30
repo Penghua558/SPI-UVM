@@ -22,10 +22,29 @@ import pmd901_agent_dec::*;
 //------------------------------------------
 // Data Members
 //------------------------------------------
+pmd901_monitor proxy;
+pmd901_trans item;
 
 //------------------------------------------
 // Methods
 //------------------------------------------
+task wait_inputs_isknown();
+  while(csn === 1'hx || park === 1'hx || bend === 1'hx) begin
+    #1;
+  end
+endtask: wait_inputs_isknown
+
+task run();
+    pmd901_trans cloned_item;
+    item = pmd901_trans::type_id::create("item");
+
+    wait_inputs_isknown();
+
+    forever begin
+        $cast(cloned_item, item.clone());
+        proxy.notify_transaction(cloned_item);
+    end
+endtask
 
 //------------------------------------------
 // Assertions 

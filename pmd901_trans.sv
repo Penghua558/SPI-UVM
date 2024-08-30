@@ -4,7 +4,6 @@ class pmd901_trans extends uvm_sequence_item;
 `uvm_object_utils(pmd901_trans)
 
 pmd901_agent_dec::work_status_e work_status;
-bit spi_ready;
 signed bit[15:0] speed;
 
 rand bit spi_violated;
@@ -32,24 +31,36 @@ function pmd901_trans::new(string name = "pmd901_trans");
 endfunction
 
 constraint pmd901_trans::overheat_cons{
-    overheat dist {
-        1'b0:/ 97,
-        1'b1:/ 3
-    };
+    if (work_status != POWER_DOWN) {
+        overheat dist {
+            1'b0:/ 97,
+            1'b1:/ 3
+        };
+    } else {
+        overheat == 1'b0
+    }
 }
 
 constraint pmd901_trans::close2overheat_cons{
-    close2overheat dist {
-        1'b0:/ 97,
-        1'b1:/ 3
-    };
+    if (work_status != POWER_DOWN) {
+        close2overheat dist {
+            1'b0:/ 97,
+            1'b1:/ 3
+        };
+    } else {
+        close2overheat == 1'b0
+    }
 }
 
 constraint pmd901_trans::spi_violated_cons{
-    spi_violated dist {
-        1'b0:/ 97,
-        1'b1:/ 3
-    };
+    if (work_status != POWER_DOWN) {
+        spi_violated dist {
+            1'b0:/ 97,
+            1'b1:/ 3
+        };
+    } else {
+        spi_violated == 1'b0;
+    }
 }
 
 function void pmd901_trans::do_copy(uvm_object rhs);
@@ -62,7 +73,6 @@ function void pmd901_trans::do_copy(uvm_object rhs);
   // Copy over data members:
   work_status = rhs_.work_status;
   spi_violated = rhs_.spi_violated;
-  spi_ready = rhs_.spi_ready;
   overheat = rhs_.overheat;
   close2overheat = rhs_.close2overheat;
   speed = rhs_.speed;
@@ -74,7 +84,6 @@ function string convert2string();
 
     $sformat(s, "%s work status: %0s\n", s, work_status.name());
     $sformat(s, "%s SPI violated: %b\n", s, spi_violated);
-    $sformat(s, "%s SPI ready: %b\n", s, spi_ready);
     $sformat(s, "%s speed: %0d\n", s, speed);
     $sformat(s, "%s overheat: %b\n", s, overheat);
     $sformat(s, "%s close to overheat: %b\n", s, close2overheat);
@@ -97,6 +106,5 @@ function bit pmd901_trans::do_compare(uvm_object rhs, uvm_comparer comparer);
   return super.do_compare(rhs, comparer) &&
          work_status == rhs_.work_status &&
          speed == rhs_.speed &&
-         spi_violated == rhs_.spi_violated &&
-         spi_ready == rhs_.spi_ready;
+         spi_violated == rhs_.spi_violated;
 endfunction:do_compare

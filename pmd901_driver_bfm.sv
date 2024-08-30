@@ -31,10 +31,7 @@ task wait_inputs_isknown();
   while(csn === 1'hx || park === 1'hx || bend === 1'hx) begin
     #1;
   end
-endtask : wait_inputs_isknown
-
-task setup_phase(pmd901_trans req);
-endtask: setup_phase
+endtask: wait_inputs_isknown
 
 function automatic work_status_e get_work_status();
     case({park, bend})
@@ -59,20 +56,20 @@ task setup_phase(ref pm901_trans req);
             @(posedge csn);
         end
         forever begin: sample_data
-            @(posedge clk);
+            @drv_cb;
             req.speed << 1;
-            req.speed[0] = mosi;
+            req.speed[0] = drv_cb.mosi;
         end
     join_any
     disable fork;
 
     req.work_status = get_work_status();
-endtask : setup_phase 
+endtask: setup_phase 
 
 task access_phase(pmd901_trans rsp);
     fan = rsp.close2overheat;
     ready = rsp.overheat;
     fault = rsp.spi_violated;
-endtask
+endtask: access_phase
   
 endinterface: pmd901_driver_bfm
