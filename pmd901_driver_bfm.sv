@@ -42,7 +42,21 @@ function automatic work_status_e get_work_status();
     endcase
 endfunction
 
-task setup_phase(ref pm901_trans req);
+task setup_on_power_change(ref pmd901_trans req);
+// we are intrested the moment working PMD901 
+// is powered down or powered up
+    @(park);
+    req.speed = 16'd0;
+endtask
+
+task setup_on_bending_change(ref pmd901_trans req);
+// make transaction when pin bending changes outside 
+// SPI transmit
+    @(bending iff csn);
+    req.speed = 16'd0;
+endtask
+
+task setup_on_spi_transmit(ref pmd901_trans req);
     // if device is not powered up, then we wait
     // for it, since there's no intrest to transmit 
     // a powered down PMD901 transaction
@@ -59,6 +73,21 @@ task setup_phase(ref pm901_trans req);
             @drv_cb;
             req.speed << 1;
             req.speed[0] = drv_cb.mosi;
+        end
+    join_any
+    disable fork;
+endtask
+
+task setup_phase(ref pm901_trans req);
+    fork
+        begin
+        setup_on_power_change(req);
+        end
+        begin
+        setup_on_bending_change(req);
+        end
+        begin
+        setup_on_spi_transmit(req);
         end
     join_any
     disable fork;

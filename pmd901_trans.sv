@@ -105,6 +105,5 @@ function bit pmd901_trans::do_compare(uvm_object rhs, uvm_comparer comparer);
   end
   return super.do_compare(rhs, comparer) &&
          work_status == rhs_.work_status &&
-         speed == rhs_.speed &&
-         spi_violated == rhs_.spi_violated;
+         speed == rhs_.speed;
 endfunction:do_compare

@@ -34,6 +34,16 @@ task wait_inputs_isknown();
   end
 endtask: wait_inputs_isknown
 
+task sample_on_power_down();
+// we are intrested the moment working PMD901 
+// is powered down
+    @(negedge park);
+    req.speed = 16'd0;
+endtask
+
+task sample_on_spi_transmit();
+endtask
+
 task run();
     pmd901_trans cloned_item;
     item = pmd901_trans::type_id::create("item");
@@ -41,6 +51,16 @@ task run();
     wait_inputs_isknown();
 
     forever begin
+        fork
+            begin
+            sample_on_power_down();
+            end
+            begin
+            sample_on_spi_transmit();
+            end
+        join_any
+        disable fork;
+        
         $cast(cloned_item, item.clone());
         proxy.notify_transaction(cloned_item);
     end
