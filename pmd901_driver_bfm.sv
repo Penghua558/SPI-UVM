@@ -42,21 +42,21 @@ function automatic work_status_e get_work_status();
     endcase
 endfunction
 
-task setup_on_power_change(ref pmd901_trans req);
+task setup_on_power_change(pmd901_trans req);
 // we are intrested the moment working PMD901 
 // is powered down or powered up
     @(park);
     req.speed = 16'd0;
 endtask
 
-task setup_on_bending_change(ref pmd901_trans req);
+task setup_on_bending_change(pmd901_trans req);
 // make transaction when pin bending changes outside 
 // SPI transmit
     @(bending iff csn);
     req.speed = 16'd0;
 endtask
 
-task setup_on_spi_transmit(ref pmd901_trans req);
+task setup_on_spi_transmit(pmd901_trans req);
     // if device is not powered up, then we wait
     // for it, since there's no intrest to transmit 
     // a powered down PMD901 transaction
@@ -78,7 +78,7 @@ task setup_on_spi_transmit(ref pmd901_trans req);
     disable fork;
 endtask
 
-task setup_phase(ref pm901_trans req);
+task setup_phase(pm901_trans req);
     fork
         begin
         setup_on_power_change(req);
@@ -95,10 +95,10 @@ task setup_phase(ref pm901_trans req);
     req.work_status = get_work_status();
 endtask: setup_phase 
 
-task access_phase(pmd901_trans rsp);
-    fan = rsp.close2overheat;
-    ready = rsp.overheat;
-    fault = rsp.spi_violated;
+task access_phase(pmd901_trans req, pmd901_trans rsp);
+    fan <= rsp.close2overheat;
+    ready <= rsp.overheat;
+    fault <= rsp.spi_violated;
 endtask: access_phase
   
 endinterface: pmd901_driver_bfm

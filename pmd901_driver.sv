@@ -40,8 +40,9 @@ task pmd901_driver::run_phase(uvm_phase phase);
         seq_item_port.get_next_item(req);
         m_bfm.setup_phase(req);
         seq_item_port.item_done(); 
+
         seq_item_port.get_next_item(rsp);
-        m_bfm.access_phase(rsp);
+        m_bfm.access_phase(req, rsp);
         seq_item_port.item_done();
     end
 endtask

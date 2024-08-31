@@ -4,7 +4,7 @@ localparam string s_my_config_id = "pmd901_agent_config";
 
 `uvm_component_utils(pmd901_agent_config)
 
-virtual pmd901_monitor_bfm mob_bfm;
+virtual pmd901_monitor_bfm mon_bfm;
 virtual pmd901_driver_bfm drv_bfm;
 //------------------------------------------
 // Data Members
@@ -24,8 +24,12 @@ rand bit disable_close2overheat;
 // Standard UVM Methods:
 extern function new(string name = "pmd901_agent_config");
 extern static function spi_agent_config get_config( uvm_component c);
-
+extern task wait_inputs_isknown();
 endclass: pmd901_agent_config
+
+task pmd901_agent_config::wait_inputs_isknown();
+    mon_bfm.wait_inputs_isknown();
+endtask
 
 function pmd901_agent_config::new(string name = "pmd901_agent_config");
   super.new(name, parent);
