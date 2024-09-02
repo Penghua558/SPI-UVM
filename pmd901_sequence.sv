@@ -4,10 +4,13 @@ class pmd901_sequence extends uvm_sequence #(pmd901_trans, pmd901_trans);
 //
 `uvm_object_utils(pmd901_sequence)
 
+import pmd901_agent_dec::*;
+
 //------------------------------------------
 // Data Members (Outputs rand, inputs non-rand)
 //------------------------------------------
-bit [31:0] memory [int];
+signed bit[15:0] working_speed;
+int repeat_num;
 
 //------------------------------------------
 // Constraints
@@ -22,44 +25,51 @@ bit [31:0] memory [int];
 // Standard UVM Methods:
 extern function new(string name = "pmd901_sequence");
 extern task body;
+extern task read_n_drive(int repeat_num, uvm_sequencer_base seqr, uvm_sequence_base parent = null);
 
 endclass:pmd901_sequence
 
 function pmd901_sequence::new(string name = "pmd901_sequence");
   super.new(name);
+  working_speed = 16'd0;
+  repeat_num = 0;
 endfunction
 
 task pmd901_sequence::body;
-  apb_slave_agent_config m_cfg = apb_slave_agent_config::get_config(m_sequencer);
-  apb_slave_seq_item req;
-  apb_slave_seq_item rsp;
+    super.body;
+  pmd901_agent_config m_cfg = pmd901_agent_config::get_config(m_sequencer);
+  pmd901_trans req;
+  pmd901_trans rsp;
 
-  req = apb_slave_seq_item::type_id::create("req");
-  rsp = apb_slave_seq_item::type_id::create("rsp");
+  req = pmd901_trans::type_id::create("req");
+  rsp = pmd901_trans::type_id::create("rsp");
 
-  m_cfg.wait_for_reset();
+  m_cfg.wait_inputs_isknown();
   // Slave sequence finishes after 60 transfers:
-  repeat(60) begin
+  repeat(repeat_num) begin
 
     // Get request
     start_item(req);
     finish_item(req);
 
-    // Prepare memory for response:
-    if (req.rw) begin
-      memory[req.addr] = req.wdata;
-    end
-    else begin
-      if(!memory.exists(req.addr)) begin
-        memory[req.addr] = 32'hdeadbeef;
-      end
+    if (req.work_status != POWER_DOWN) begin
+        working_speed = req.speed;
     end
 
     // Respond:
     start_item(rsp);
     rsp.copy(req);
-    assert (rsp.randomize() with {if(!rsp.rw) rsp.rdata == memory[rsp.addr];});
+    assert (rsp.randomize() with {
+        if(m_cfg.disable_spi_violation) rsp.spi_violated == 1'b0;
+        if(m_cfg.disable_close2overheat) rsp.close2overheat == 1'b0;
+        if(m_cfg.disable_overheat) rsp.overheat == 1'b0;
+        }
+    );
     finish_item(rsp);
   end
-
 endtask:body
+
+task read_n_drive(int repeat_num, uvm_sequencer_base seqr, uvm_sequence_base parent = null);
+    this.repeat_num = repeat_num; 
+    this.start(seqr, parent); 
+endtask: read_n_drive
