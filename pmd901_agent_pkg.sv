@@ -7,6 +7,9 @@ import uvm_pkg::*;
 
 `include "pmd901_driver.sv"
 `include "pmd901_sequencer.sv"
+`include "pmd901_sequence.sv"
+
+`include "pmd901_agent.sv"
 
 
 
