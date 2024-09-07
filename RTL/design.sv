@@ -48,14 +48,17 @@
 `include "spi_defines.v"
 `include "spi_clgen.v"
 `include "spi_shift.v"
+`include "cdc_handshaking.v"
+`include "spi_initiator.v"
 
 module spi_top #(
 // divide input clock frequency by SCLK_DIVIDER*2
 parameter SCLK_DIVIDER = 8'd8
 )
 (
-  // APB Signals
-  PCLK, PRESETN, PADDR, PWDATA, PRDATA, PSEL,
+  // clock frequency 100MHz
+  input wire clk, 
+  rstn, PADDR, PWDATA, PRDATA, PSEL,
   PWRITE, PENABLE, PREADY, PSLVERR,
   // Interrupt
   IRQ,
@@ -65,8 +68,8 @@ parameter SCLK_DIVIDER = 8'd8
 
   parameter Tp = 1;
   
-  input                            PCLK;            // APB System Clock
-  input                            PRESETN;         // APB Reset - Active low
+  input                            clk;            // APB System Clock
+  input                            rstn;         // APB Reset - Active low
   input [4:0]                      PADDR;           // APB Address
   input [31:0]                     PWDATA;          // Write data
   output[31:0]                     PRDATA;          // Read data
@@ -101,7 +104,11 @@ parameter SCLK_DIVIDER = 8'd8
   wire                             spi_ss_sel;       // ss register select
   wire                             pos_edge;         // recognize posedge of sclk
   wire                             neg_edge;         // recognize negedge of sclk
-  wire sclk_gen_o;
+  wire sclk_gen_o; // SPI clock derived from module input clock
+  wire spi_ready; // asserted to indicate recent SPI transmit has completed
+  wire spi_ready_crossed; // signal of spi_ready crossed different clock domain
+  wire spi_start; // asserted to start a new SPI transmit
+  wire spi_start_crossed; // signal of spi_start crossed different clock domain
   
   // Address decoder
   assign spi_divider_sel = PSEL & PENABLE & (PADDR[`SPI_OFS_BITS] == `SPI_DEVIDE);
@@ -141,18 +148,18 @@ parameter SCLK_DIVIDER = 8'd8
   end
   
   // Wb data out
-  always @(posedge PCLK or negedge PRESETN)
+  always @(posedge clk or negedge rstn)
   begin
-    if (PRESETN == 0)
+    if (rstn == 0)
       PRDATA <= #Tp 32'b0;
     else
       PRDATA <= #Tp wb_dat;
   end
   
   // Wb acknowledge
-  always @(posedge PCLK or negedge PRESETN)
+  always @(posedge clk or negedge rstn)
   begin
-    if (PRESETN == 0)
+    if (rstn == 0)
       PREADY <= #Tp 1'b0;
     else
       PREADY <= #Tp PSEL & PENABLE & ~PREADY;
@@ -162,9 +169,9 @@ parameter SCLK_DIVIDER = 8'd8
   assign PSLVERR = 1'b0;
   
   // Interrupt
-  always @(posedge PCLK or negedge PRESETN)
+  always @(posedge clk or negedge rstn)
   begin
-    if (PRESETN == 0)
+    if (rstn == 0)
       IRQ <= #Tp 1'b0;
     else if (ie && tip && last_bit && pos_edge)
       IRQ <= #Tp 1'b1;
@@ -174,9 +181,9 @@ parameter SCLK_DIVIDER = 8'd8
   
   
   // Ctrl register
-  always @(posedge PCLK or negedge PRESETN)
+  always @(posedge clk or negedge rstn)
   begin
-    if (PRESETN == 0)
+    if (rstn == 0)
       ctrl <= #Tp {`SPI_CTRL_BIT_NB{1'b0}};
     else if(spi_ctrl_sel && PWRITE && !tip)
       begin
@@ -195,11 +202,36 @@ parameter SCLK_DIVIDER = 8'd8
   
   assign ss_pad_o = ~((ss & {`SPI_SS_NB{tip & ass}}) | (ss & {`SPI_SS_NB{!ass}}));
   
-  spi_clgen clgen (.clk_in(PCLK), .rst(!PRESETN), 
+  spi_clgen clgen (.clk_in(clk), .rst(!rstn), 
                    .divider(SCLK_DIVIDER), .clk_out(sclk_gen_o), .pos_edge(pos_edge), 
                    .neg_edge(neg_edge));
+  spi_initiator #(
+    .SPI_TRANSMIT_DELAY(2001)
+  ) transmit_initiator(
+    .clk(clk),
+    .rstn(rstn),
+    .spi_ready(spi_ready_crossed),
+    .spi_start(spi_start)
+  );
+
+  cdc_handshaking spi_start_crossing(
+    .old_clk(clk),
+    .data_in(spi_start),
+    .new_clk(sclk_gen_o),
+
+    .data_out(spi_start_crossed)
+  );
+
+  cdc_handshaking spi_ready_crossing(
+    .old_clk(sclk_gen_o),
+    .data_in(spi_ready),
+    .new_clk(clk),
+
+    .data_out(spi_ready_crossed)
+  );
+
   
-  spi_shift shift (.clk(PCLK), .rst(!PRESETN), .len(char_len[`SPI_CHAR_LEN_BITS-1:0]),
+  spi_shift shift (.clk(clk), .rst(!rstn), .len(char_len[`SPI_CHAR_LEN_BITS-1:0]),
                    .latch(spi_tx_sel[3:0] & {4{PWRITE}}), .byte_sel(4'hF), .lsb(lsb), 
                    .pos_edge(pos_edge), .neg_edge(neg_edge), 
                    .rx_negedge(rx_negedge), .tx_negedge(tx_negedge),
