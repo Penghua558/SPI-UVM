@@ -56,8 +56,26 @@ module spi_top #(
 parameter SCLK_DIVIDER = 8'd8
 )
 (
-  // clock frequency 100MHz
-  input wire clk, 
+    // clock frequency 100MHz
+    input wire clk, 
+    input wire rstn,
+    input wire [15:0] wdata,
+    input wire we,
+
+    input wire dev_enable,
+    input wire dev_bending,
+
+    // PMD901 signals
+    // active HIGH, SPI violation, currently no use
+    input wire fault,
+    // active HIGH, PMD901 close to overheat, currently no use
+    input wire fan,
+    // active HIGH, PMD901 overheat, currently no use
+    input wire ready,
+
+    output reg park,
+    output reg bending,
+
   rstn, PADDR, PWDATA, PRDATA, PSEL,
   PWRITE, PENABLE, PREADY, PSLVERR,
   // Interrupt
@@ -110,94 +128,6 @@ parameter SCLK_DIVIDER = 8'd8
   wire spi_start; // asserted to start a new SPI transmit
   wire spi_start_crossed; // signal of spi_start crossed different clock domain
   
-  // Address decoder
-  assign spi_divider_sel = PSEL & PENABLE & (PADDR[`SPI_OFS_BITS] == `SPI_DEVIDE);
-  assign spi_ctrl_sel    = PSEL & PENABLE & (PADDR[`SPI_OFS_BITS] == `SPI_CTRL);
-  assign spi_tx_sel[0]   = PSEL & PENABLE & (PADDR[`SPI_OFS_BITS] == `SPI_TX_0);
-  assign spi_tx_sel[1]   = PSEL & PENABLE & (PADDR[`SPI_OFS_BITS] == `SPI_TX_1);
-  assign spi_tx_sel[2]   = PSEL & PENABLE & (PADDR[`SPI_OFS_BITS] == `SPI_TX_2);
-  assign spi_tx_sel[3]   = PSEL & PENABLE & (PADDR[`SPI_OFS_BITS] == `SPI_TX_3);
-  assign spi_ss_sel      = PSEL & PENABLE & (PADDR[`SPI_OFS_BITS] == `SPI_SS);
-  
-  // Read from registers
-  always @(PADDR or rx or ctrl or ss)
-  begin
-    case (PADDR[`SPI_OFS_BITS])
-`ifdef SPI_MAX_CHAR_128
-      `SPI_RX_0:    wb_dat = rx[31:0];
-      `SPI_RX_1:    wb_dat = rx[63:32];
-      `SPI_RX_2:    wb_dat = rx[95:64];
-      `SPI_RX_3:    wb_dat = {{128-`SPI_MAX_CHAR{1'b0}}, rx[`SPI_MAX_CHAR-1:96]};
-`else
-`ifdef SPI_MAX_CHAR_64
-      `SPI_RX_0:    wb_dat = rx[31:0];
-      `SPI_RX_1:    wb_dat = {{64-`SPI_MAX_CHAR{1'b0}}, rx[`SPI_MAX_CHAR-1:32]};
-      `SPI_RX_2:    wb_dat = 32'b0;
-      `SPI_RX_3:    wb_dat = 32'b0;
-`else
-      `SPI_RX_0:    wb_dat = {{32-`SPI_MAX_CHAR{1'b0}}, rx[`SPI_MAX_CHAR-1:0]};
-      `SPI_RX_1:    wb_dat = 32'b0;
-      `SPI_RX_2:    wb_dat = 32'b0;
-      `SPI_RX_3:    wb_dat = 32'b0;
-`endif
-`endif
-      `SPI_CTRL:    wb_dat = {{32-`SPI_CTRL_BIT_NB{1'b0}}, ctrl};
-      `SPI_SS:      wb_dat = {{32-`SPI_SS_NB{1'b0}}, ss};
-      default:      wb_dat = 32'bx;
-    endcase
-  end
-  
-  // Wb data out
-  always @(posedge clk or negedge rstn)
-  begin
-    if (rstn == 0)
-      PRDATA <= #Tp 32'b0;
-    else
-      PRDATA <= #Tp wb_dat;
-  end
-  
-  // Wb acknowledge
-  always @(posedge clk or negedge rstn)
-  begin
-    if (rstn == 0)
-      PREADY <= #Tp 1'b0;
-    else
-      PREADY <= #Tp PSEL & PENABLE & ~PREADY;
-  end
-  
-  // Wb error
-  assign PSLVERR = 1'b0;
-  
-  // Interrupt
-  always @(posedge clk or negedge rstn)
-  begin
-    if (rstn == 0)
-      IRQ <= #Tp 1'b0;
-    else if (ie && tip && last_bit && pos_edge)
-      IRQ <= #Tp 1'b1;
-    else if (PREADY)
-      IRQ <= #Tp 1'b0;
-  end
-  
-  
-  // Ctrl register
-  always @(posedge clk or negedge rstn)
-  begin
-    if (rstn == 0)
-      ctrl <= #Tp {`SPI_CTRL_BIT_NB{1'b0}};
-    else if(spi_ctrl_sel && PWRITE && !tip)
-      begin
-          ctrl[`SPI_CTRL_BIT_NB-1:0] <= #Tp PWDATA[`SPI_CTRL_BIT_NB-1:0];
-      end
-    else if(tip && last_bit && pos_edge)
-      ctrl[`SPI_CTRL_GO] <= #Tp 1'b0;
-  end
-  
-  assign rx_negedge = ctrl[`SPI_CTRL_RX_NEGEDGE];
-  assign tx_negedge = ctrl[`SPI_CTRL_TX_NEGEDGE];
-  assign char_len   = ctrl[`SPI_CTRL_CHAR_LEN];
-  assign lsb        = ctrl[`SPI_CTRL_LSB];
-  assign ie         = ctrl[`SPI_CTRL_IE];
   
   
   assign ss_pad_o = ~((ss & {`SPI_SS_NB{tip & ass}}) | (ss & {`SPI_SS_NB{!ass}}));
@@ -205,6 +135,16 @@ parameter SCLK_DIVIDER = 8'd8
   spi_clgen clgen (.clk_in(clk), .rst(!rstn), 
                    .divider(SCLK_DIVIDER), .clk_out(sclk_gen_o), .pos_edge(pos_edge), 
                    .neg_edge(neg_edge));
+
+  reg pmd901_reg(
+    .clk(clk),
+    .rstn(rstn),
+    .wdata(wdata),
+    .we(we),
+
+    .motor_speed(motor_speed)
+  );
+
   spi_initiator #(
     .SPI_TRANSMIT_DELAY(2001)
   ) transmit_initiator(
