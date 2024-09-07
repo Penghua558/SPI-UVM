@@ -49,7 +49,10 @@
 `include "spi_clgen.v"
 `include "spi_shift.v"
 
-module spi_top
+module spi_top #(
+// divide input clock frequency by SCLK_DIVIDER*2
+parameter SCLK_DIVIDER = 8'd8
+)
 (
   // APB Signals
   PCLK, PRESETN, PADDR, PWDATA, PRDATA, PSEL,
@@ -85,7 +88,6 @@ module spi_top
   reg                              IRQ;
                                                
   // Internal signals
-  reg       [`SPI_DIVIDER_LEN-1:0] divider;          // Divider register
   reg       [`SPI_CTRL_BIT_NB-1:0] ctrl;             // Control and status register
   reg             [`SPI_SS_NB-1:0] ss;               // Slave select register
   reg                     [32-1:0] wb_dat;           // wb data out
@@ -97,7 +99,6 @@ module spi_top
   wire                             lsb;              // lsb first on line
   wire                             ie;               // interrupt enable
   wire                             ass;              // automatic slave select
-  wire                             spi_divider_sel;  // divider register select
   wire                             spi_ctrl_sel;     // ctrl register select
   wire                       [3:0] spi_tx_sel;       // tx_l register select
   wire                             spi_ss_sel;       // ss register select
@@ -116,7 +117,7 @@ module spi_top
   assign spi_ss_sel      = PSEL & PENABLE & (PADDR[`SPI_OFS_BITS] == `SPI_SS);
   
   // Read from registers
-  always @(PADDR or rx or ctrl or divider or ss)
+  always @(PADDR or rx or ctrl or ss)
   begin
     case (PADDR[`SPI_OFS_BITS])
 `ifdef SPI_MAX_CHAR_128
@@ -138,7 +139,6 @@ module spi_top
 `endif
 `endif
       `SPI_CTRL:    wb_dat = {{32-`SPI_CTRL_BIT_NB{1'b0}}, ctrl};
-      `SPI_DEVIDE:  wb_dat = {{32-`SPI_DIVIDER_LEN{1'b0}}, divider};
       `SPI_SS:      wb_dat = {{32-`SPI_SS_NB{1'b0}}, ss};
       default:      wb_dat = 32'bx;
     endcase
@@ -176,28 +176,6 @@ module spi_top
       IRQ <= #Tp 1'b0;
   end
   
-  // Divider register
-  always @(posedge PCLK or negedge PRESETN)
-  begin
-    if (PRESETN == 0)
-        divider <= #Tp {`SPI_DIVIDER_LEN{1'b0}};
-    else if (spi_divider_sel && PWRITE && !tip)
-      begin
-      `ifdef SPI_DIVIDER_LEN_8
-        
-          divider <= #Tp PWDATA[`SPI_DIVIDER_LEN-1:0];
-      `endif
-      `ifdef SPI_DIVIDER_LEN_16
-          divider[`SPI_DIVIDER_LEN-1:0] <= #Tp PWDATA[`SPI_DIVIDER_LEN-1:0];
-      `endif
-      `ifdef SPI_DIVIDER_LEN_24
-          divider[`SPI_DIVIDER_LEN-1:0] <= #Tp PWDATA[`SPI_DIVIDER_LEN-1:0];
-      `endif
-      `ifdef SPI_DIVIDER_LEN_32
-          divider[`SPI_DIVIDER_LEN-1:0] <= #Tp PWDATA[`SPI_DIVIDER_LEN-1:0];
-      `endif
-      end
-  end
   
   // Ctrl register
   always @(posedge PCLK or negedge PRESETN)
@@ -244,8 +222,8 @@ module spi_top
   
   assign ss_pad_o = ~((ss & {`SPI_SS_NB{tip & ass}}) | (ss & {`SPI_SS_NB{!ass}}));
   
-  spi_clgen clgen (.clk_in(PCLK), .rst(!PRESETN), .go(go), .enable(tip), .last_clk(last_bit),
-                   .divider(divider), .clk_out(sclk_pad_o), .pos_edge(pos_edge), 
+  spi_clgen clgen (.clk_in(PCLK), .rst(!PRESETN), 
+                   .divider(SCLK_DIVIDER), .clk_out(sclk_pad_o), .pos_edge(pos_edge), 
                    .neg_edge(neg_edge));
   
   spi_shift shift (.clk(PCLK), .rst(!PRESETN), .len(char_len[`SPI_CHAR_LEN_BITS-1:0]),
