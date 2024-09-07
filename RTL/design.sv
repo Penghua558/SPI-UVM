@@ -89,23 +89,19 @@ parameter SCLK_DIVIDER = 8'd8
                                                
   // Internal signals
   reg       [`SPI_CTRL_BIT_NB-1:0] ctrl;             // Control and status register
-  reg             [`SPI_SS_NB-1:0] ss;               // Slave select register
   reg                     [32-1:0] wb_dat;           // wb data out
   wire         [`SPI_MAX_CHAR-1:0] rx;               // Rx register
   wire                             rx_negedge;       // miso is sampled on negative edge
   wire                             tx_negedge;       // mosi is driven on negative edge
   wire    [`SPI_CHAR_LEN_BITS-1:0] char_len;         // char len
-  wire                             go;               // go
   wire                             lsb;              // lsb first on line
   wire                             ie;               // interrupt enable
-  wire                             ass;              // automatic slave select
   wire                             spi_ctrl_sel;     // ctrl register select
   wire                       [3:0] spi_tx_sel;       // tx_l register select
   wire                             spi_ss_sel;       // ss register select
-  wire                             tip;              // transfer in progress
   wire                             pos_edge;         // recognize posedge of sclk
   wire                             neg_edge;         // recognize negedge of sclk
-  wire                             last_bit;         // marks last character bit
+  wire sclk_gen_o;
   
   // Address decoder
   assign spi_divider_sel = PSEL & PENABLE & (PADDR[`SPI_OFS_BITS] == `SPI_DEVIDE);
@@ -192,45 +188,22 @@ parameter SCLK_DIVIDER = 8'd8
   
   assign rx_negedge = ctrl[`SPI_CTRL_RX_NEGEDGE];
   assign tx_negedge = ctrl[`SPI_CTRL_TX_NEGEDGE];
-  assign go         = ctrl[`SPI_CTRL_GO];
   assign char_len   = ctrl[`SPI_CTRL_CHAR_LEN];
   assign lsb        = ctrl[`SPI_CTRL_LSB];
   assign ie         = ctrl[`SPI_CTRL_IE];
-  assign ass        = ctrl[`SPI_CTRL_ASS];
   
-  // Slave select register
-  always @(posedge PCLK or negedge PRESETN)
-  begin
-    if (PRESETN == 0)
-      ss <= #Tp {`SPI_SS_NB{1'b0}};
-    else if(spi_ss_sel && PWRITE && !tip)
-      begin
-      `ifdef SPI_SS_NB_8
-          ss <= #Tp PWDATA[`SPI_SS_NB-1:0];
-      `endif
-      `ifdef SPI_SS_NB_16
-          ss[`SPI_SS_NB-1:0] <= #Tp PWDATA[`SPI_SS_NB-1:0];
-      `endif
-      `ifdef SPI_SS_NB_24
-          ss[`SPI_SS_NB-1:0] <= #Tp PWDATA[`SPI_SS_NB-1:0];
-      `endif
-      `ifdef SPI_SS_NB_32
-          ss[`SPI_SS_NB-1:0] <= #Tp PWDATA[`SPI_SS_NB-1:0];
-      `endif
-      end
-  end
   
   assign ss_pad_o = ~((ss & {`SPI_SS_NB{tip & ass}}) | (ss & {`SPI_SS_NB{!ass}}));
   
   spi_clgen clgen (.clk_in(PCLK), .rst(!PRESETN), 
-                   .divider(SCLK_DIVIDER), .clk_out(sclk_pad_o), .pos_edge(pos_edge), 
+                   .divider(SCLK_DIVIDER), .clk_out(sclk_gen_o), .pos_edge(pos_edge), 
                    .neg_edge(neg_edge));
   
   spi_shift shift (.clk(PCLK), .rst(!PRESETN), .len(char_len[`SPI_CHAR_LEN_BITS-1:0]),
                    .latch(spi_tx_sel[3:0] & {4{PWRITE}}), .byte_sel(4'hF), .lsb(lsb), 
-                   .go(go), .pos_edge(pos_edge), .neg_edge(neg_edge), 
+                   .pos_edge(pos_edge), .neg_edge(neg_edge), 
                    .rx_negedge(rx_negedge), .tx_negedge(tx_negedge),
                    .tip(tip), .last(last_bit), 
                    .p_in(PWDATA), .p_out(rx), 
-                   .s_clk(sclk_pad_o), .s_in(miso_pad_i), .s_out(mosi_pad_o));
+                   .s_clk(sclk_gen_o), .s_in(miso_pad_i), .s_out(mosi_pad_o));
 endmodule
