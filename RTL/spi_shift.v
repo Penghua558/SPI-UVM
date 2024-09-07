@@ -41,102 +41,111 @@
 //`include "spi_defines.v"
 //`include "timescale.v"
 
-module spi_shift (
+module spi_shift #(
+    parameter [5:0] CS_N_HOLD_COUNT = 6'd3
+)(
     // system clock is esstienaly the same as s_clk, except s_clk will be
     // pulled HIGH once SPI transmit is not undergoing.
     input wire clk, 
     input wire rst, 
-    latch, byte_sel, len, lsb, go,
-                  pos_edge, neg_edge, rx_negedge, tx_negedge,
-    output reg spi_ready, 
-    last, 
+    input wire spi_start,
     input wire [15:0] p_in, 
-    p_out, 
-    output reg s_clk, 
+
     input wire s_in, // miso
-    output reg s_out // mosi
+    output reg spi_ready, 
+    output reg s_clk, 
+    output reg cs_n,
+    output reg mosi // MSB is transmitted at first
 );
 
-  parameter Tp = 1;
-  
-  input                    [3:0] latch;        // latch signal for storing the data in shift register
-  input                    [3:0] byte_sel;     // byte select signals for storing the data in shift register
-  input [`SPI_CHAR_LEN_BITS-1:0] len;          // data len in bits (minus one)
-  input                          lsb;          // lbs first on the line
-  input                          go;           // start stansfer
-  input                          pos_edge;     // recognize posedge of clk
-  input                          neg_edge;     // recognize negedge of clk
-  input                          rx_negedge;   // s_in is sampled on negative edge 
-  input                          tx_negedge;   // s_out is driven on negative edge
-  output                         last;         // last bit
-  output     [`SPI_MAX_CHAR-1:0] p_out;        // parallel out
-                                               
                               
-  reg     [`SPI_CHAR_LEN_BITS:0] cnt;          // data bit count
-  reg        [15:0] data;         // shift register
-  wire    [`SPI_CHAR_LEN_BITS:0] tx_bit_pos;   // next bit position
-  wire    [`SPI_CHAR_LEN_BITS:0] rx_bit_pos;   // next bit position
-  wire                           rx_clk;       // rx clock enable
-  wire                           tx_clk;       // tx clock enable
+  parameter [2:0] IDLE = 3'b0;
+  parameter [2:0] CS_N_HOLD = 3'b010;
+  parameter [2:0] DATA_OUT = 3'b100;
   
-  assign p_out = data;
-  
-  assign tx_bit_pos = lsb ? {!(|len), len} - cnt : cnt - {{`SPI_CHAR_LEN_BITS{1'b0}},1'b1};
-  assign rx_bit_pos = lsb ? {!(|len), len} - (rx_negedge ? cnt + {{`SPI_CHAR_LEN_BITS{1'b0}},1'b1} : cnt) : 
-                            (rx_negedge ? cnt : cnt - {{`SPI_CHAR_LEN_BITS{1'b0}},1'b1});
-  
-  assign last = !(|cnt);
-  
-  assign rx_clk = (rx_negedge ? neg_edge : pos_edge) && (!last || s_clk);
-  assign tx_clk = (tx_negedge ? neg_edge : pos_edge) && !last;
-  
-  // Character bit counter
-  always @(posedge clk or posedge rst)
-  begin
-    if(rst)
-      cnt <= #Tp {`SPI_CHAR_LEN_BITS+1{1'b0}};
-    else
-      begin
-        if(spi_ready)
-          cnt <= #Tp pos_edge ? (cnt - {{`SPI_CHAR_LEN_BITS{1'b0}}, 1'b1}) : cnt;
-        else
-          cnt <= #Tp !(|len) ? {1'b1, {`SPI_CHAR_LEN_BITS{1'b0}}} : {1'b0, len};
+  reg [2:0] next_state;
+  reg [2:0] current_state;
+  reg [5:0] cs_n_hold_cnt;
+  reg [15:0] motor_speed;
+  reg [4:0] spi_transmit_cnt;
+
+  always@(posedge clk or posedge rst) begin
+      if (rst) begin
+          current_state <= IDLE;
+          s_clk <= 1'b1;
+          cs_n <= 1'b1;
+          mosi <= 1'b0;
+          spi_ready <= 1'b1;
+
+          cs_n_hold_cnt <= 6'd0;
+          spi_transmit_cnt <= 5'd0;
+      end else begin
+          current_state <= next_state;
+
+          case(current_state)
+              IDLE: begin
+                  s_clk <= 1'b1;
+                  cs_n <= 1'b1;
+                  mosi <= 1'b0;
+                  spi_ready <= 1'b1;
+              end
+              CS_N_HOLD: begin
+                  cs_n <= 1'b0;
+                  s_clk <= 1'b1;
+                  mosi <= 1'b0;
+                  spi_ready <= 1'b0;
+                  motor_speed <= p_in;
+
+                  if (cs_n_hold_cnt == CS_N_HOLD_COUNT)
+                      cs_n_hold_cnt <= 6'd0;
+                  else
+                    cs_n_hold_cnt <= cs_n_hold_cnt + 6'd1;
+              end
+              DATA_OUT: begin
+                  cs_n <= 1'b0;
+                  s_clk <= clk;
+                  spi_ready <= 1'b0;
+
+                  if (spi_transmit_cnt == 5'd16)
+                    spi_transmit_cnt <= 5'd0;
+                  else
+                    spi_transmit_cnt <= spi_transmit_cnt + 5'd1;
+
+                  mosi <= motor_speed[15];
+                  motor_speed <= motor_speed << 1;
+              end
+              default: begin
+                  s_clk <= 1'b1;
+                  cs_n <= 1'b1;
+                  mosi <= 1'b0;
+                  spi_ready <= 1'b1;
+              end
+          endcase
       end
   end
-  
-  // Transfer in progress
-  always @(posedge clk or posedge rst)
-  begin
-    if(rst)
-      spi_ready <= #Tp 1'b0;
-  else if(go && ~spi_ready)
-    spi_ready <= #Tp 1'b1;
-  else if(spi_ready && last && pos_edge)
-    spi_ready <= #Tp 1'b0;
+
+  always@(*) begin
+      case(current_state)
+          IDLE: begin
+              if (spi_start)
+                  next_state = CS_N_HOLD;
+              else
+                  next_state = IDLE;
+          end
+          CS_N_HOLD: begin
+              if (cs_n_hold_cnt == CS_N_HOLD_COUNT)
+                  next_state = DATA_OUT;
+              else
+                  next_state = CS_N_HOLD;
+          end
+          DATA_OUT: begin
+              if (spi_transmit_cnt == 5'd16)
+                  next_state = IDLE;
+              else
+                  next_state = DATA_OUT;
+          end
+          default: next_state = IDLE;
+      endcase
   end
-  
-  // Sending bits to the line
-  always @(posedge clk or posedge rst)
-  begin
-    if (rst)
-      s_out   <= #Tp 1'b0;
-    else
-      s_out <= #Tp (tx_clk || !spi_ready) ? data[tx_bit_pos[`SPI_CHAR_LEN_BITS-1:0]] : s_out;
-  end
-  
-  // Receiving bits from the line
-  always @(posedge clk or posedge rst)
-  begin
-    if (rst)
-      data   <= #Tp {`SPI_MAX_CHAR{1'b0}};
-    else if (latch[0] && !spi_ready) begin
-        if (byte_sel[0])
-          data[7:0] <= #Tp p_in[7:0];
-        if (byte_sel[1])
-          data[`SPI_MAX_CHAR-1:8] <= #Tp p_in[`SPI_MAX_CHAR-1:8];
-      end
-    else
-      data[rx_bit_pos[`SPI_CHAR_LEN_BITS-1:0]] <= #Tp rx_clk ? s_in : data[rx_bit_pos[`SPI_CHAR_LEN_BITS-1:0]];
-  end
-  
+
 endmodule
