@@ -1,5 +1,5 @@
 module spi_initiator # (
-    parameter SPI_TRANSMIT_DELAY = 12'd2001
+    parameter [11:0] SPI_TRANSMIT_DELAY = 12'd2001
 )(
     // clock frequency 100MHz
     input wire clk,

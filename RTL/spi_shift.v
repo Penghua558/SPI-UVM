@@ -51,7 +51,7 @@ module spi_shift #(
     input wire spi_start,
     input wire [15:0] p_in, 
 
-    input wire s_in, // miso
+    input wire miso,
     output reg spi_ready, 
     output reg s_clk, 
     output reg cs_n,

@@ -53,7 +53,9 @@
 
 module spi_top #(
 // divide input clock frequency by SCLK_DIVIDER*2
-parameter SCLK_DIVIDER = 8'd8
+parameter [7:0] SCLK_DIVIDER = 8'd8,
+parameter [11:0] SPI_TRANSMIT_DELAY = 12'd2001,
+parameter [5:0] CS_N_HOLD_COUNT = 6'd3
 )
 (
     // clock frequency 100MHz
@@ -76,61 +78,20 @@ parameter SCLK_DIVIDER = 8'd8
     output reg park,
     output reg bending,
 
-  rstn, PADDR, PWDATA, PRDATA, PSEL,
-  PWRITE, PENABLE, PREADY, PSLVERR,
-  // Interrupt
-  IRQ,
   // SPI signals
-  ss_pad_o, sclk_pad_o, mosi_pad_o, miso_pad_i
+    output reg sclk,
+    output reg cs_n,
+    output reg mosi
 );
 
   parameter Tp = 1;
-  
-  input                            clk;            // APB System Clock
-  input                            rstn;         // APB Reset - Active low
-  input [4:0]                      PADDR;           // APB Address
-  input [31:0]                     PWDATA;          // Write data
-  output[31:0]                     PRDATA;          // Read data
-  input                            PWRITE;
-  input                            PSEL;
-  input                            PENABLE;
-  output                           PREADY;
-  output                           PSLVERR;
-  output                           IRQ;
-                                                     
-  // SPI signals                                     
-  output          [`SPI_SS_NB-1:0] ss_pad_o;         // slave select
-  output                           sclk_pad_o;       // serial clock
-  output                           mosi_pad_o;       // master out slave in
-  input                            miso_pad_i;       // master in slave out
-                                                     
-  reg                     [32-1:0] PRDATA;
-  reg                              PREADY;
-  reg                              IRQ;
                                                
   // Internal signals
-  reg       [`SPI_CTRL_BIT_NB-1:0] ctrl;             // Control and status register
-  reg                     [32-1:0] wb_dat;           // wb data out
-  wire         [`SPI_MAX_CHAR-1:0] rx;               // Rx register
-  wire                             rx_negedge;       // miso is sampled on negative edge
-  wire                             tx_negedge;       // mosi is driven on negative edge
-  wire    [`SPI_CHAR_LEN_BITS-1:0] char_len;         // char len
-  wire                             lsb;              // lsb first on line
-  wire                             ie;               // interrupt enable
-  wire                             spi_ctrl_sel;     // ctrl register select
-  wire                       [3:0] spi_tx_sel;       // tx_l register select
-  wire                             spi_ss_sel;       // ss register select
-  wire                             pos_edge;         // recognize posedge of sclk
-  wire                             neg_edge;         // recognize negedge of sclk
   wire sclk_gen_o; // SPI clock derived from module input clock
   wire spi_ready; // asserted to indicate recent SPI transmit has completed
   wire spi_ready_crossed; // signal of spi_ready crossed different clock domain
   wire spi_start; // asserted to start a new SPI transmit
   wire spi_start_crossed; // signal of spi_start crossed different clock domain
-  
-  
-  
-  assign ss_pad_o = ~((ss & {`SPI_SS_NB{tip & ass}}) | (ss & {`SPI_SS_NB{!ass}}));
   
   spi_clgen clgen (.clk_in(clk), .rst(!rstn), 
                    .divider(SCLK_DIVIDER), .clk_out(sclk_gen_o), .pos_edge(pos_edge), 
@@ -146,7 +107,7 @@ parameter SCLK_DIVIDER = 8'd8
   );
 
   spi_initiator #(
-    .SPI_TRANSMIT_DELAY(2001)
+    .SPI_TRANSMIT_DELAY(SPI_TRANSMIT_DELAY)
   ) transmit_initiator(
     .clk(clk),
     .rstn(rstn),
@@ -171,11 +132,17 @@ parameter SCLK_DIVIDER = 8'd8
   );
 
   
-  spi_shift shift (.clk(clk), .rst(!rstn), .len(char_len[`SPI_CHAR_LEN_BITS-1:0]),
-                   .latch(spi_tx_sel[3:0] & {4{PWRITE}}), .byte_sel(4'hF), .lsb(lsb), 
-                   .pos_edge(pos_edge), .neg_edge(neg_edge), 
-                   .rx_negedge(rx_negedge), .tx_negedge(tx_negedge),
-                   .tip(tip), .last(last_bit), 
-                   .p_in(PWDATA), .p_out(rx), 
-                   .s_clk(sclk_gen_o), .s_in(miso_pad_i), .s_out(mosi_pad_o));
+  spi_shift#(
+    .CS_N_HOLD_COUNT(CS_N_HOLD_COUNT)
+  ) shift (
+      .clk(sclk_gen_o), 
+      .rst(!rstn),
+      .spi_start(spi_start_crossed),
+      .p_in(motor_speed),
+
+      .miso(),
+      .spi_ready(spi_ready),
+      .s_clk(sclk), 
+      .cs_n(cs_n),
+      .mosi(mosi));
 endmodule
