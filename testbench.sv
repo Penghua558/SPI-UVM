@@ -19,6 +19,8 @@
 
  `include "config_macro.svh"
  `include "apb_if.sv"
+ `include "agents/pmd901_slave_agent/pmd901_if.sv"
+ `include "agents/pmd901_slave_agent/pmd901_agent_pkg.sv"
  `include "spi_if.sv"
  `include "apb_agent_pkg.sv"
  `include "apb_driver_bfm.sv"
@@ -50,6 +52,7 @@ logic PRESETn;
 apb_if APB(PCLK, PRESETn);   // APB interface
 spi_if SPI();  // SPI Interface
 intr_if INTR();   // Interrupt
+pmd901_if PMD901_IF();
 
 //
 // Instantiate the BFM interfaces:
@@ -76,18 +79,29 @@ apb_driver_bfm APB_drv_bfm(
    .PWRITE  (APB.PWRITE),
    .PREADY  (APB.PREADY)
 );
-spi_monitor_bfm SPI_mon_bfm(
-   .clk  (SPI.clk),
-   .cs   (SPI.cs),
-   .miso (SPI.miso),
-   .mosi (SPI.mosi)
+
+pmd901_driver_bfm PMD901_drv_bfm(
+    .clk(PMD901_IF.clk),
+    .csn(PMD901_IF.csn),
+    .bend(PMD901_IF.bend),
+    .park(PMD901_IF.park),
+    .mosi(PMD901_IF.mosi),
+    .fault(PMD901_IF.fault),
+    .fan(PMD901_IF.fan),
+    .ready(PMD901_IF.ready)
 );
-spi_driver_bfm SPI_drv_bfm(
-   .clk  (SPI.clk),
-   .cs   (SPI.cs),
-   .miso (SPI.miso),
-   .mosi (SPI.mosi)
+
+pmd901_monitor_bfm PMD901_mon_bfm(
+    .clk(PMD901_IF.clk),
+    .csn(PMD901_IF.csn),
+    .bend(PMD901_IF.bend),
+    .park(PMD901_IF.park),
+    .mosi(PMD901_IF.mosi),
+    .fault(PMD901_IF.fault),
+    .fan(PMD901_IF.fan),
+    .ready(PMD901_IF.ready)
 );
+
 intr_bfm INTR_bfm(
    .IRQ  (INTR.IRQ),
    .IREQ (INTR.IREQ)
@@ -95,25 +109,11 @@ intr_bfm INTR_bfm(
 
   
 // DUT
-spi_top DUT(
-    // APB Interface:
-    .PCLK(PCLK),
-    .PRESETN(PRESETn),
-    .PSEL(APB.PSEL[0]),
-    .PADDR(APB.PADDR[4:0]),
-    .PWDATA(APB.PWDATA),
-    .PRDATA(APB.PRDATA),
-    .PENABLE(APB.PENABLE),
-    .PREADY(APB.PREADY),
-    .PSLVERR(),
-    .PWRITE(APB.PWRITE),
-    // Interrupt output
-    .IRQ(INTR.IRQ),
-    // SPI signals
-    .ss_pad_o(SPI.cs),
-    .sclk_pad_o(SPI.clk),
-    .mosi_pad_o(SPI.mosi),
-    .miso_pad_i(SPI.miso)
+spi_top#(
+.SCLK_DIVIDER(8'd8),
+.SPI_TRANSMIT_DELAY(12'd2001),
+.CS_N_HOLD_COUNT(6'd3)
+) DUT(
 );
 
 

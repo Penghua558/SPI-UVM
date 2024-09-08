@@ -96,8 +96,12 @@ parameter [5:0] CS_N_HOLD_COUNT = 6'd3
   spi_clgen clgen (.clk_in(clk), .rst(!rstn), 
                    .divider(SCLK_DIVIDER), .clk_out(sclk_gen_o), .pos_edge(pos_edge), 
                    .neg_edge(neg_edge));
+  always@(posedge clk) begin
+      park <= dev_enable;
+      bending <= dev_bending;
+  end
 
-  reg pmd901_reg(
+  spi_reg pmd901_reg(
     .clk(clk),
     .rstn(rstn),
     .wdata(wdata),

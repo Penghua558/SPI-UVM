@@ -1,4 +1,4 @@
-module reg(
+module spi_reg(
     input wire clk,
     input wire rstn,
     input wire [15:0] wdata,
