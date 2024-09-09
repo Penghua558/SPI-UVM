@@ -49,7 +49,6 @@ logic PRESETn;
 //
 // Instantiate the pin interfaces:
 //
-apb_if APB(PCLK, PRESETn);   // APB interface
 spi_if SPI();  // SPI Interface
 intr_if INTR();   // Interrupt
 pmd901_if PMD901_IF();
@@ -57,28 +56,6 @@ pmd901_if PMD901_IF();
 //
 // Instantiate the BFM interfaces:
 //
-apb_monitor_bfm APB_mon_bfm(
-   .PCLK    (APB.PCLK),
-   .PRESETn (APB.PRESETn),
-   .PADDR   (APB.PADDR),
-   .PRDATA  (APB.PRDATA),
-   .PWDATA  (APB.PWDATA),
-   .PSEL    (APB.PSEL),
-   .PENABLE (APB.PENABLE),
-   .PWRITE  (APB.PWRITE),
-   .PREADY  (APB.PREADY)
-);
-apb_driver_bfm APB_drv_bfm(
-   .PCLK    (APB.PCLK),
-   .PRESETn (APB.PRESETn),
-   .PADDR   (APB.PADDR),
-   .PRDATA  (APB.PRDATA),
-   .PWDATA  (APB.PWDATA),
-   .PSEL    (APB.PSEL),
-   .PENABLE (APB.PENABLE),
-   .PWRITE  (APB.PWRITE),
-   .PREADY  (APB.PREADY)
-);
 
 pmd901_driver_bfm PMD901_drv_bfm(
     .clk(PMD901_IF.clk),
@@ -114,6 +91,20 @@ spi_top#(
 .SPI_TRANSMIT_DELAY(12'd2001),
 .CS_N_HOLD_COUNT(6'd3)
 ) DUT(
+    .clk(PCLK),
+    .rstn(PRESETn),
+    .wdata(),
+    .we(),
+    .dev_enable(),
+    .dev_bending(),
+    .fault(PMD901_IF.fault),
+    .fan(PMD901_IF.fan),
+    .ready(PMD901_IF.ready),
+    .park(PMD901_IF.park),
+    .bending(PMD901_IF.bending),
+    .sclk(PMD901_IF.clk),
+    .cs_n(PMD901_IF.cs_n),
+    .mosi(PMD901_IF.mosi)
 );
 
 
@@ -121,8 +112,8 @@ spi_top#(
 // Virtual interface wrapping & run_test()
 initial begin //tbx vif_binding_block
   import uvm_pkg::uvm_config_db;
-  uvm_config_db #(virtual apb_monitor_bfm)::set(null, "uvm_test_top", "APB_mon_bfm", APB_mon_bfm);
-  uvm_config_db #(virtual apb_driver_bfm) ::set(null, "uvm_test_top", "APB_drv_bfm", APB_drv_bfm);
+  uvm_config_db #(virtual pmd901_monitor_bfm)::set(null, "uvm_test_top", "PMD901_mon_bfm", PMD901_mon_bfm);
+  uvm_config_db #(virtual pmd901_driver_bfm) ::set(null, "uvm_test_top", "PMD901_drv_bfm", PMD901_drv_bfm);
   uvm_config_db #(virtual spi_monitor_bfm)::set(null, "uvm_test_top", "SPI_mon_bfm", SPI_mon_bfm);
   uvm_config_db #(virtual spi_driver_bfm) ::set(null, "uvm_test_top", "SPI_drv_bfm", SPI_drv_bfm);
   uvm_config_db #(virtual intr_bfm)       ::set(null, "uvm_test_top", "INTR_bfm", INTR_bfm);
@@ -137,6 +128,8 @@ initial begin
   forever #10ns PCLK = ~PCLK;
 end
 initial begin 
+  PRESETn = 1;
+  repeat(4) @(posedge PCLK);
   PRESETn = 0;
   repeat(4) @(posedge PCLK);
   PRESETn = 1;
