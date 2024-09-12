@@ -114,9 +114,6 @@ initial begin //tbx vif_binding_block
   import uvm_pkg::uvm_config_db;
   uvm_config_db #(virtual pmd901_monitor_bfm)::set(null, "uvm_test_top", "PMD901_mon_bfm", PMD901_mon_bfm);
   uvm_config_db #(virtual pmd901_driver_bfm) ::set(null, "uvm_test_top", "PMD901_drv_bfm", PMD901_drv_bfm);
-  uvm_config_db #(virtual spi_monitor_bfm)::set(null, "uvm_test_top", "SPI_mon_bfm", SPI_mon_bfm);
-  uvm_config_db #(virtual spi_driver_bfm) ::set(null, "uvm_test_top", "SPI_drv_bfm", SPI_drv_bfm);
-  uvm_config_db #(virtual intr_bfm)       ::set(null, "uvm_test_top", "INTR_bfm", INTR_bfm);
   run_test();
 end
 

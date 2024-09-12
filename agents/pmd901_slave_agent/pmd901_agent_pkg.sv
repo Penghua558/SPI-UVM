@@ -11,4 +11,4 @@ import uvm_pkg::*;
 `include "pmd901_sequence.sv"
 
 `include "pmd901_agent.sv"
-endpackage: spi_agent_pkg
+endpackage: pmd901_agent_pkg 
