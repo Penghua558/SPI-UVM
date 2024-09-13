@@ -5,7 +5,7 @@ class pmd901_monitor extends uvm_component;
 import pmd901_agent_pkg::*;
 import pmd901_agent_dec::*;
 
-protected virtual pmd901_driver_bfm m_bfm;
+protected virtual pmd901_monitor_bfm m_bfm;
 //------------------------------------------
 // Data Members
 //------------------------------------------
@@ -34,7 +34,7 @@ endfunction
 function pmd901_monitor::build_phase(uvm_phase phase);
     super.build_phase(phase);
     m_cfg = pmd901_agent_config::get_config(this);
-    m_bfm = m_cfg.drv_bfm;
+    m_bfm = m_cfg.mon_bfm;
     m_bfm.proxy = this;
 
     ap = new("ap", this);

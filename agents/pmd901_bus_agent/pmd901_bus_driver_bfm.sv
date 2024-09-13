@@ -24,6 +24,7 @@ task wait_for_reset();
     we <= 1'b0;
     dev_enable <= 1'b0;
     dev_bending <= 1'b0;
+    @(posedge rstn);
 endtask: wait_for_reset 
 
 task drive(pmd901_bus_trans req);

@@ -34,7 +34,7 @@ task pmd901_driver::run_phase(uvm_phase phase);
     pmd901_trans req;
     pmd901_trans rsp;
 
-    m_bfm.wait_inputs_isknown();
+    // m_bfm.wait_inputs_isknown();
     forever begin
         seq_item_port.get_next_item(req);
         m_bfm.setup_phase(req);
