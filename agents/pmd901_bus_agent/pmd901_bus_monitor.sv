@@ -2,19 +2,19 @@ class pmd901_bus_monitor extends uvm_component;
 
 `uvm_component_utils(pmd901_bus_monitor)
 
-import pmd901_agent_pkg::*;
+import pmd901_bus_agent_pkg::*;
 
 protected virtual pmd901_bus_monitor_bfm m_bfm;
 //------------------------------------------
 // Data Members
 //------------------------------------------
-pmd901_agent_config m_cfg;
+pmd901_bus_agent_config m_cfg;
 
 
 //------------------------------------------
 // Component Members
 //------------------------------------------
-uvm_analysis_port #(pmd901_trans) ap;
+uvm_analysis_port #(pmd901_bus_trans) ap;
 
 //------------------------------------------
 // Methods
@@ -32,8 +32,8 @@ endfunction
 
 function pmd901_bus_monitor::build_phase(uvm_phase phase);
     super.build_phase(phase);
-    m_cfg = pmd901_agent_config::get_config(this);
-    m_bfm = m_cfg.drv_bfm;
+    m_cfg = pmd901_bus_agent_config::get_config(this);
+    m_bfm = m_cfg.mon_bfm;
     m_bfm.proxy = this;
 
     ap = new("ap", this);

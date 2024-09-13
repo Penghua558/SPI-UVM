@@ -8,7 +8,7 @@ interface pmd901_bus_monitor_bfm (
 
 `include "uvm_macros.svh"
 import uvm_pkg::*;
-import pmd901_agent_pkg::*;
+import pmd901_bus_agent_pkg::*;
 
 //------------------------------------------
 // Data Members
