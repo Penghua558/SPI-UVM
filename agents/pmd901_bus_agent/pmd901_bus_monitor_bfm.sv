@@ -19,8 +19,7 @@ pmd901_bus_monitor proxy;
 // Methods
 //------------------------------------------
 task wait_for_reset();
-    @(negedge rstn);
-    @(posedge rstn);
+    wait(rstn);
 endtask: wait_for_reset 
 
 task run();

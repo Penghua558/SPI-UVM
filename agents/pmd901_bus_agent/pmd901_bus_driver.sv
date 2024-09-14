@@ -8,7 +8,7 @@ protected virtual pmd901_bus_driver_bfm m_bfm;
 //------------------------------------------
 // Data Members
 //------------------------------------------
-pmd901_agent_config m_cfg;
+pmd901_bus_agent_config m_cfg;
 
 //------------------------------------------
 // Methods
@@ -32,6 +32,7 @@ endfunction: build_phase
 task pmd901_bus_driver::run_phase(uvm_phase phase);
     pmd901_bus_trans req;
 
+    m_bfm.reset();
     forever begin
         seq_item_port.get_next_item(req);
         m_bfm.drive(req);

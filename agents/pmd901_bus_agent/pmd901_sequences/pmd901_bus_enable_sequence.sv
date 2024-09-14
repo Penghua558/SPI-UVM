@@ -9,8 +9,6 @@ import pmd901_bus_agent_dec::*;
 //------------------------------------------
 // Data Members (Outputs rand, inputs non-rand)
 //------------------------------------------
-signed bit[15:0] working_speed;
-int repeat_num;
 
 //------------------------------------------
 // Constraints
@@ -25,51 +23,39 @@ int repeat_num;
 // Standard UVM Methods:
 extern function new(string name = "pmd901_bus_enable_sequence");
 extern task body;
-extern task read_n_drive(int repeat_num, uvm_sequencer_base seqr, uvm_sequence_base parent = null);
+extern task enable(uvm_sequencer_base seqr, uvm_sequence_base parent = null);
 
 endclass:pmd901_bus_enable_sequence
 
 function pmd901_bus_enable_sequence::new(string name = "pmd901_bus_enable_sequence");
   super.new(name);
-  working_speed = 16'd0;
-  repeat_num = 0;
 endfunction
 
 task pmd901_bus_enable_sequence::body;
     super.body;
-  pmd901_agent_config m_cfg = pmd901_agent_config::get_config(m_sequencer);
-  pmd901_trans req;
-  pmd901_trans rsp;
+    pmd901_bus_agent_config m_cfg = pmd901_bus_agent_config::get_config(m_sequencer);
+    pmd901_bus_trans req;
 
-  req = pmd901_trans::type_id::create("req");
-  rsp = pmd901_trans::type_id::create("rsp");
+  req = pmd901_bus_trans::type_id::create("req");
 
-  m_cfg.wait_inputs_isknown();
+  m_cfg.wait_for_reset();
   // Slave sequence finishes after 60 transfers:
   repeat(repeat_num) begin
 
     // Get request
     start_item(req);
-    finish_item(req);
 
-    if (req.work_status != POWER_DOWN) begin
-        working_speed = req.speed;
-    end
-
-    // Respond:
-    start_item(rsp);
-    rsp.copy(req);
-    assert (rsp.randomize() with {
-        if(m_cfg.disable_spi_violation) rsp.spi_violated == 1'b0;
-        if(m_cfg.disable_close2overheat) rsp.close2overheat == 1'b0;
-        if(m_cfg.disable_overheat) rsp.overheat == 1'b0;
+    assert (req.randomize() with {
+        req.we = 1'b0;
+        req.enable = 1'b1;
+        req.bending = 1'b0;
         }
     );
-    finish_item(rsp);
+
+    finish_item(req);
   end
 endtask:body
 
-task read_n_drive(int repeat_num, uvm_sequencer_base seqr, uvm_sequence_base parent = null);
-    this.repeat_num = repeat_num; 
+task enable(uvm_sequencer_base seqr, uvm_sequence_base parent = null);
     this.start(seqr, parent); 
-endtask: read_n_drive
+endtask: enable
