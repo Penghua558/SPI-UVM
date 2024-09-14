@@ -9,6 +9,13 @@ interface pmd901_if;
   logic park;
 endinterface: pmd901_if
 
+`include "uvm_macros.svh"
+import uvm_pkg::*;
+import pmd901_agent_pkg::*;
+
+//------------------------------------------
+// Assertions 
+//------------------------------------------
 event spi_clk_event;
 bit seq_start;
 initial begin
