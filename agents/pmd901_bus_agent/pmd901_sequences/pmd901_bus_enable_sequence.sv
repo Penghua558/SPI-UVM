@@ -9,6 +9,7 @@ import pmd901_bus_agent_dec::*;
 //------------------------------------------
 // Data Members (Outputs rand, inputs non-rand)
 //------------------------------------------
+bit enable;
 
 //------------------------------------------
 // Constraints
@@ -23,7 +24,7 @@ import pmd901_bus_agent_dec::*;
 // Standard UVM Methods:
 extern function new(string name = "pmd901_bus_enable_sequence");
 extern task body;
-extern task enable(uvm_sequencer_base seqr, uvm_sequence_base parent = null);
+extern task set_enable(bit enable, uvm_sequencer_base seqr, uvm_sequence_base parent = null);
 
 endclass:pmd901_bus_enable_sequence
 
@@ -36,26 +37,23 @@ task pmd901_bus_enable_sequence::body;
     pmd901_bus_agent_config m_cfg = pmd901_bus_agent_config::get_config(m_sequencer);
     pmd901_bus_trans req;
 
-  req = pmd901_bus_trans::type_id::create("req");
+    req = pmd901_bus_trans::type_id::create("req");
 
-  m_cfg.wait_for_reset();
-  // Slave sequence finishes after 60 transfers:
-  repeat(repeat_num) begin
-
+    m_cfg.wait_for_reset();
     // Get request
     start_item(req);
 
     assert (req.randomize() with {
         req.we = 1'b0;
-        req.enable = 1'b1;
+        req.enable = this.enable;
         req.bending = 1'b0;
         }
     );
 
     finish_item(req);
-  end
 endtask:body
 
-task enable(uvm_sequencer_base seqr, uvm_sequence_base parent = null);
+task pmd901_bus_enable_sequence::set_enable(bit enable, uvm_sequencer_base seqr, uvm_sequence_base parent = null);
+    this.enable = enable;
     this.start(seqr, parent); 
-endtask: enable
+endtask: set_enable
