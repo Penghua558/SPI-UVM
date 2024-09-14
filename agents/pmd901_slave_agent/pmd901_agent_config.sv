@@ -23,7 +23,7 @@ rand bit disable_close2overheat;
 //------------------------------------------
 // Standard UVM Methods:
 extern function new(string name = "pmd901_agent_config");
-extern static function spi_agent_config get_config( uvm_component c);
+extern static function pmd901_agent_config get_config( uvm_component c);
 extern task wait_inputs_isknown();
 endclass: pmd901_agent_config
 
