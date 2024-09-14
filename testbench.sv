@@ -18,20 +18,15 @@
 //------------------------------------------------------------
 
  `include "config_macro.svh"
- `include "apb_if.sv"
  `include "agents/pmd901_slave_agent/pmd901_if.sv"
  `include "agents/pmd901_slave_agent/pmd901_agent_pkg.sv"
- `include "spi_if.sv"
- `include "apb_agent_pkg.sv"
- `include "apb_driver_bfm.sv"
- `include "apb_monitor_bfm.sv"
- `include "spi_agent_pkg.sv"
- `include "spi_driver_bfm.sv"
- `include "spi_monitor_bfm.sv"
+ `include "agents/pmd901_slave_agent/pmd901_driver_bfm.sv"
+ `include "agents/pmd901_slave_agent/pmd901_monitor_bfm.sv"
+ `include "./agents/pmd901_bus_agent/pmd901_bus_if.sv"
+ `include "./agents/pmd901_bus_agent/pmd901_bus_agent_pkg.sv"
+ `include "./agents/pmd901_bus_agent/pmd901_bus_driver_bfm.sv"
+ `include "./agents/pmd901_bus_agent/pmd901_bus_monitor_bfm.sv"
  `include "spi_reg_pkg.sv"
- `include "intr_if.sv"
- `include "intr_pkg.sv"
- `include "intr_bfm.sv"
  `include "spi_env_pkg.sv"
  `include "spi_bus_sequence_lib_pkg.sv"
  `include "spi_test_seq_lib_pkg.sv"
@@ -49,9 +44,8 @@ logic PRESETn;
 //
 // Instantiate the pin interfaces:
 //
-spi_if SPI();  // SPI Interface
-intr_if INTR();   // Interrupt
 pmd901_if PMD901_IF();
+pmd901_bus_if PMD901_BUS_IF(PRESETn);
 
 //
 // Instantiate the BFM interfaces:
@@ -79,11 +73,21 @@ pmd901_monitor_bfm PMD901_mon_bfm(
     .ready(PMD901_IF.ready)
 );
 
-intr_bfm INTR_bfm(
-   .IRQ  (INTR.IRQ),
-   .IREQ (INTR.IREQ)
+pmd901_bus_driver_bfm PMD901_BUS_drv_bfm(
+    .rstn(PMD901_BUS_IF.rstn),
+    .wdata(PMD901_BUS_IF.wdata),
+    .we(PMD901_BUS_IF.we),
+    .dev_enable(PMD901_BUS_IF.dev_enable),
+    .dev_bending(PMD901_BUS_IF.dev_bending)
 );
 
+pmd901_bus_monitor_bfm PMD901_BUS_mon_bfm(
+    .rstn(PMD901_BUS_IF.rstn),
+    .wdata(PMD901_BUS_IF.wdata),
+    .we(PMD901_BUS_IF.we),
+    .dev_enable(PMD901_BUS_IF.dev_enable),
+    .dev_bending(PMD901_BUS_IF.dev_bending)
+);
   
 // DUT
 spi_top#(
@@ -93,10 +97,10 @@ spi_top#(
 ) DUT(
     .clk(PCLK),
     .rstn(PRESETn),
-    .wdata(),
-    .we(),
-    .dev_enable(),
-    .dev_bending(),
+    .wdata(PMD901_BUS_IF.wdata),
+    .we(PMD901_BUS_IF.we),
+    .dev_enable(PMD901_BUS_IF.dev_enable),
+    .dev_bending(PMD901_BUS_IF.dev_bending),
     .fault(PMD901_IF.fault),
     .fan(PMD901_IF.fan),
     .ready(PMD901_IF.ready),
@@ -114,6 +118,9 @@ initial begin //tbx vif_binding_block
   import uvm_pkg::uvm_config_db;
   uvm_config_db #(virtual pmd901_monitor_bfm)::set(null, "uvm_test_top", "PMD901_mon_bfm", PMD901_mon_bfm);
   uvm_config_db #(virtual pmd901_driver_bfm) ::set(null, "uvm_test_top", "PMD901_drv_bfm", PMD901_drv_bfm);
+
+  uvm_config_db #(virtual pmd901_bus_monitor_bfm)::set(null, "uvm_test_top", "PMD901_BUS_mon_bfm", PMD901_BUS_mon_bfm);
+  uvm_config_db #(virtual pmd901_bus_driver_bfm)::set(null, "uvm_test_top", "PMD901_BUS_drv_bfm", PMD901_BUS_drv_bfm);
   run_test();
 end
 
@@ -131,12 +138,5 @@ initial begin
   repeat(4) @(posedge PCLK);
   PRESETn = 1;
 end
-
-initial begin
-          $dumpfile("dump.vcd");
-          $dumpvars;
-          #1000us
-          $finish;
-end 
 
 endmodule: top

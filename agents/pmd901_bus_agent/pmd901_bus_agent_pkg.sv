@@ -7,7 +7,8 @@ import uvm_pkg::*;
 
 `include "pmd901_bus_driver.sv"
 `include "pmd901_bus_sequencer.sv"
-`include "pmd901_bus_sequence.sv"
+
+import pmd901_bus_sequence_lib_pkg::*;
 
 `include "pmd901_bus_agent.sv"
 endpackage 
