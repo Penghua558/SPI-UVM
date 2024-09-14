@@ -1,10 +1,10 @@
-class pmd901_sequence extends uvm_sequence #(pmd901_trans, pmd901_trans);
+class pmd901_bus_enable_sequence extends uvm_sequence #(pmd901_bus_trans, pmd901_bus_trans);
 
 // UVM Factory Registration Macro
 //
-`uvm_object_utils(pmd901_sequence)
+`uvm_object_utils(pmd901_bus_enable_sequence)
 
-import pmd901_agent_dec::*;
+import pmd901_bus_agent_dec::*;
 
 //------------------------------------------
 // Data Members (Outputs rand, inputs non-rand)
@@ -23,19 +23,19 @@ int repeat_num;
 //------------------------------------------
 
 // Standard UVM Methods:
-extern function new(string name = "pmd901_sequence");
+extern function new(string name = "pmd901_bus_enable_sequence");
 extern task body;
 extern task read_n_drive(int repeat_num, uvm_sequencer_base seqr, uvm_sequence_base parent = null);
 
-endclass:pmd901_sequence
+endclass:pmd901_bus_enable_sequence
 
-function pmd901_sequence::new(string name = "pmd901_sequence");
+function pmd901_bus_enable_sequence::new(string name = "pmd901_bus_enable_sequence");
   super.new(name);
   working_speed = 16'd0;
   repeat_num = 0;
 endfunction
 
-task pmd901_sequence::body;
+task pmd901_bus_enable_sequence::body;
     super.body;
   pmd901_agent_config m_cfg = pmd901_agent_config::get_config(m_sequencer);
   pmd901_trans req;
