@@ -2,7 +2,6 @@ class pmd901_agent extends uvm_component;
 
 `uvm_component_utils(pmd901_agent)
 
-protected virtual pmd901_driver_bfm m_bfm;
 //------------------------------------------
 // Data Members
 //------------------------------------------
@@ -33,8 +32,8 @@ function pmd901_agent::build_phase(uvm_phase phase);
     m_monitor = pmd901_monitor::type_id::create("m_monitor", this);
     // Only build the driver and sequencer if active
     if(m_cfg.active == UVM_ACTIVE) begin
-      m_driver = spi_driver::type_id::create("m_driver", this);
-      m_sequencer = spi_sequencer::type_id::create("m_sequencer", this);
+      m_driver = pmd901_driver::type_id::create("m_driver", this);
+      m_sequencer = pmd901_sequencer::type_id::create("m_sequencer", this);
     end
 endfunction: build_phase
 
