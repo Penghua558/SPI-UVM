@@ -19,11 +19,9 @@
 
  `include "config_macro.svh"
  `include "agents/pmd901_slave_agent/pmd901_if.sv"
- `include "agents/pmd901_slave_agent/pmd901_agent_pkg.sv"
  `include "agents/pmd901_slave_agent/pmd901_driver_bfm.sv"
  `include "agents/pmd901_slave_agent/pmd901_monitor_bfm.sv"
  `include "./agents/pmd901_bus_agent/pmd901_bus_if.sv"
- `include "./agents/pmd901_bus_agent/pmd901_bus_agent_pkg.sv"
  `include "./agents/pmd901_bus_agent/pmd901_bus_driver_bfm.sv"
  `include "./agents/pmd901_bus_agent/pmd901_bus_monitor_bfm.sv"
  `include "spi_reg_pkg.sv"
@@ -32,8 +30,8 @@
  `include "spi_test_seq_lib_pkg.sv"
  `include "spi_test_lib_pkg.sv"
 module top;
-  // pragma attribute hdl_top partition_module_xrtl
 
+import env_pkg::*;
 `include "timescale.v"
 
 // PCLK and PRESETn
