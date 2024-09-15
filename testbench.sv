@@ -43,7 +43,7 @@ logic PRESETn;
 // Instantiate the pin interfaces:
 //
 pmd901_if PMD901_IF();
-pmd901_bus_if PMD901_BUS_IF(PRESETn);
+pmd901_bus_if PMD901_BUS_IF(PCLK, PRESETn);
 
 //
 // Instantiate the BFM interfaces:
