@@ -27,7 +27,7 @@ extern function new(string name = "pmd901_bus_bending_sequence");
 extern task body;
 extern task set_bending(bit enable, bit bending, uvm_sequencer_base seqr, uvm_sequence_base parent = null);
 
-endclass:pmd901_bus_bending_sequence
+endclass: pmd901_bus_bending_sequence
 
 function pmd901_bus_bending_sequence::new(string name = "pmd901_bus_bending_sequence");
   super.new(name);
