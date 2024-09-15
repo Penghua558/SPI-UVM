@@ -49,6 +49,11 @@ pmd901_bus_if PMD901_BUS_IF(PCLK, PRESETn);
 // Instantiate the BFM interfaces:
 //
 
+pmd901_timecheck timecheck(
+    .clk(PMD901_IF.clk),
+    .csn(PMD901_IF.csn)
+);
+
 pmd901_driver_bfm PMD901_drv_bfm(
     .clk(PMD901_IF.clk),
     .csn(PMD901_IF.csn),
