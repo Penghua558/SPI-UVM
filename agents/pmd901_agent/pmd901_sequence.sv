@@ -10,7 +10,6 @@ import pmd901_agent_dec::*;
 // Data Members (Outputs rand, inputs non-rand)
 //------------------------------------------
 signed bit[15:0] working_speed;
-int repeat_num;
 
 //------------------------------------------
 // Constraints
@@ -25,14 +24,13 @@ int repeat_num;
 // Standard UVM Methods:
 extern function new(string name = "pmd901_sequence");
 extern task body;
-extern task read_n_drive(int repeat_num, uvm_sequencer_base seqr, uvm_sequence_base parent = null);
+extern task read_n_drive(uvm_sequencer_base seqr, uvm_sequence_base parent = null);
 
 endclass:pmd901_sequence
 
 function pmd901_sequence::new(string name = "pmd901_sequence");
   super.new(name);
   working_speed = 16'd0;
-  repeat_num = 0;
 endfunction
 
 task pmd901_sequence::body;
@@ -46,8 +44,7 @@ task pmd901_sequence::body;
 
   m_cfg.wait_inputs_isknown();
   // Slave sequence finishes after 60 transfers:
-  repeat(repeat_num) begin
-
+  forever begin
     // Get request
     start_item(req);
     finish_item(req);
@@ -69,7 +66,6 @@ task pmd901_sequence::body;
   end
 endtask:body
 
-task read_n_drive(int repeat_num, uvm_sequencer_base seqr, uvm_sequence_base parent = null);
-    this.repeat_num = repeat_num; 
+task read_n_drive(uvm_sequencer_base seqr, uvm_sequence_base parent = null);
     this.start(seqr, parent); 
 endtask: read_n_drive

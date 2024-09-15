@@ -1,9 +1,10 @@
 interface pmd901_bus_monitor_bfm (
-  input logic rstn,
-  input logic [15:0] wdata,
-  input logic we,
-  input logic dev_enable,
-  input logic dev_bending
+    input logic clk, 
+    input logic rstn,
+    input logic [15:0] wdata,
+    input logic we,
+    input logic dev_enable,
+    input logic dev_bending
 );
 
 `include "uvm_macros.svh"
@@ -28,7 +29,7 @@ task run();
     item = pmd901_bus_trans::type_id::create("item");
 
     forever begin
-        @(rstn, wdata, we, dev_enable, dev_bending); 
+        @(posedge clk);
         item.speed = wdata;
         item.we = we;
         item.enable = dev_enable;
