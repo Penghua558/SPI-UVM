@@ -1,7 +1,7 @@
 class pmd901_bus_trans extends uvm_sequence_item;
 `uvm_object_utils(pmd901_bus_trans)
 
-rand signed bit[15:0] speed;
+rand bit signed [15:0] speed;
 rand bit we;
 rand bit enable;
 rand bit bending;
@@ -32,7 +32,7 @@ constraint pmd901_bus_trans::speed_cons{
 }
 
 function void pmd901_bus_trans::do_copy(uvm_object rhs);
-  spi_seq_item rhs_;
+  pmd901_bus_trans rhs_;
 
   if(!$cast(rhs_, rhs)) begin
     `uvm_fatal("do_copy", "cast of rhs object failed")
@@ -54,7 +54,7 @@ function void do_print(uvm_printer printer);
 endfunction
 
 function bit pmd901_bus_trans::do_compare(uvm_object rhs, uvm_comparer comparer);
-  spi_seq_item rhs_;
+  pmd901_bus_trans rhs_;
 
   if(!$cast(rhs_, rhs)) begin
     `uvm_error("do_copy", "cast of rhs object failed")

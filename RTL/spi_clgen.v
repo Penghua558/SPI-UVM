@@ -62,7 +62,7 @@ module spi_clgen (clk_in, rst, divider, clk_out, pos_edge, neg_edge);
   
   
   assign cnt_zero = cnt == 8'b0;
-  assign cnt_one  = cnt == {{7'b0, 1'b1};
+  assign cnt_one  = cnt == {{7'b0, 1'b1}};
   
   // Counter counts half period
   always @(posedge clk_in or posedge rst)

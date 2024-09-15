@@ -7,11 +7,9 @@ interface pmd901_if;
   logic fan;
   logic ready;
   logic park;
-endinterface: pmd901_if
 
 `include "uvm_macros.svh"
 import uvm_pkg::*;
-import pmd901_agent_pkg::*;
 
 //------------------------------------------
 // Assertions 
@@ -22,11 +20,11 @@ initial begin
 forever begin
     fork
         begin
-            @(negedge cs_n);
+            @(negedge csn);
             seq_start = 1'b1;
         end
         begin
-            @(posedge cs_n);
+            @(posedge csn);
             seq_start = 1'b0;
         end
         begin
@@ -55,3 +53,5 @@ else
 assert property (readyfan)
 else
     `uvm_fatal("PMD901 MONITOR BFM", "Ready and fan should not be asserted at the same time")
+
+endinterface: pmd901_if

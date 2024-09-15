@@ -4,7 +4,7 @@ class pmd901_trans extends uvm_sequence_item;
 `uvm_object_utils(pmd901_trans)
 
 pmd901_agent_dec::work_status_e work_status;
-signed bit[15:0] speed;
+bit signed[15:0] speed;
 
 rand bit spi_violated;
 rand bit overheat;
@@ -37,7 +37,7 @@ constraint pmd901_trans::overheat_cons{
             1'b1:/ 3
         };
     } else {
-        overheat == 1'b0
+        overheat == 1'b0;
     }
 }
 
@@ -48,7 +48,7 @@ constraint pmd901_trans::close2overheat_cons{
             1'b1:/ 3
         };
     } else {
-        close2overheat == 1'b0
+        close2overheat == 1'b0;
     }
 }
 
@@ -64,7 +64,7 @@ constraint pmd901_trans::spi_violated_cons{
 }
 
 function void pmd901_trans::do_copy(uvm_object rhs);
-  spi_seq_item rhs_;
+  pmd901_trans rhs_;
 
   if(!$cast(rhs_, rhs)) begin
     `uvm_fatal("do_copy", "cast of rhs object failed")
@@ -97,7 +97,7 @@ function void do_print(uvm_printer printer);
 endfunction
 
 function bit pmd901_trans::do_compare(uvm_object rhs, uvm_comparer comparer);
-  spi_seq_item rhs_;
+  pmd901_trans rhs_;
 
   if(!$cast(rhs_, rhs)) begin
     `uvm_error("do_copy", "cast of rhs object failed")
