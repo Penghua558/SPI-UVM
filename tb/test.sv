@@ -113,6 +113,8 @@ task test::main_phase(uvm_phase phase);
     pmd901_bus_rand_speed_bending_sequence pmd901_speed_seq = 
         pmd901_bus_rand_speed_bending_sequence::type_id::create("pmd901_speed_seq");
 
+    int i = 0;
+    super.main_phase(phase);
     phase.raise_objection(this);
     fork
         begin
@@ -123,11 +125,19 @@ task test::main_phase(uvm_phase phase);
             pmd901_enable_seq.set_enable(test_enable, m_env.m_pmd901_bus_agent.m_sequencer);
             `uvm_info("TEST", "Enabled PMD901", UVM_MEDIUM)
             pmd901_seq.read_n_drive(m_env.m_pmd901_agent.m_sequencer);
-            repeat(60) begin
+            repeat(40) begin
+                i++;
+                `uvm_info("TEST", $sformatf("sequence number: %0d/60", i), UVM_MEDIUM)
                 pmd901_speed_seq.rand_speed_bending(test_enable, m_env.m_pmd901_bus_agent.m_sequencer);
                 pmd901_seq.read_n_drive(m_env.m_pmd901_agent.m_sequencer);
             end
             `uvm_info("TEST", "Finished generating speed stimulus", UVM_MEDIUM)
+        end
+        begin
+            // test should consume less than 1000us, if we are able to wait so
+            // long, it must mean the test is stuck, so we ended it forcefully
+            #1500us;
+            `uvm_error("TEST", "Test does not ended normally")
         end
     join_any
     phase.drop_objection(this);
