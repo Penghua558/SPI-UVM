@@ -14,7 +14,6 @@ rand bit close2overheat;
 extern function new(string name = "pmd901_trans");
 extern function void do_copy(uvm_object rhs);
 extern function bit do_compare(uvm_object rhs, uvm_comparer comparer);
-extern function string convert2string();
 extern function void do_print(uvm_printer printer);
 // extern function void do_record(uvm_recorder recorder);
 
@@ -78,22 +77,14 @@ function void pmd901_trans::do_copy(uvm_object rhs);
   speed = rhs_.speed;
 endfunction:do_copy
 
-function string convert2string();
-    string s;
-    s = super.convert2string();
 
-    $sformat(s, "%s work status: %0s\n", s, work_status.name());
-    $sformat(s, "%s SPI violated: %b\n", s, spi_violated);
-    $sformat(s, "%s speed: %0d\n", s, speed);
-    $sformat(s, "%s overheat: %b\n", s, overheat);
-    $sformat(s, "%s close to overheat: %b\n", s, close2overheat);
-
-    return s;
-endfunction
-
-function void do_print(uvm_printer printer);
+function void pmd901_trans::do_print(uvm_printer printer);
     super.do_print(printer);
-    printer.m_string = convert2string();
+    printer.print_string("Work status", work_status.name());
+    printer.print_field_int("speed", speed, $bits(speed), UVM_DEC);
+    printer.print_string("SPI violated?", spi_violated? "Yes":"No");
+    printer.print_string("Overheat?", overheat? "Yes":"No");
+    printer.print_string("Close to overheat?", close2overheat? "Yes":"No");
 endfunction
 
 function bit pmd901_trans::do_compare(uvm_object rhs, uvm_comparer comparer);

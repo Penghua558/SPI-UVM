@@ -52,7 +52,7 @@ endtask
 task setup_on_bending_change(pmd901_trans req);
 // make transaction when pin bending changes outside 
 // SPI transmit
-    @(bending iff csn);
+    @(bend iff csn);
     req.speed = 16'd0;
 endtask
 
@@ -71,7 +71,7 @@ task setup_on_spi_transmit(pmd901_trans req);
         end
         forever begin: sample_data
             @drv_cb;
-            req.speed << 1;
+            req.speed = req.speed << 1;
             req.speed[0] = drv_cb.mosi;
         end
     join_any

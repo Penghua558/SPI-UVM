@@ -1,8 +1,8 @@
+import pmd901_bus_agent_pkg::*;
 class pmd901_bus_monitor extends uvm_component;
 
 `uvm_component_utils(pmd901_bus_monitor)
 
-import pmd901_bus_agent_pkg::*;
 
 protected virtual pmd901_bus_monitor_bfm m_bfm;
 //------------------------------------------
@@ -23,7 +23,7 @@ uvm_analysis_port #(pmd901_bus_trans) ap;
 extern function new(string name = "pmd901_bus_monitor", uvm_component parent = null);
 extern function void build_phase(uvm_phase phase);
 extern task run_phase(uvm_phase phase);
-extern function void pmd901_bus_monitor::notify_transaction(pmd901_trans item);
+extern function void pmd901_bus_monitor::notify_transaction(pmd901_bus_trans item);
 endclass: pmd901_bus_monitor 
 
 function pmd901_bus_monitor::new(string name = "pmd901_bus_monitor", uvm_component parent = null);
@@ -43,6 +43,6 @@ task pmd901_bus_monitor::run_phase(uvm_phase phase);
     m_bfm.run();
 endtask
 
-function void pmd901_bus_monitor::notify_transaction(pmd901_trans item);
+function void pmd901_bus_monitor::notify_transaction(pmd901_bus_trans item);
   ap.write(item);
 endfunction: notify_transaction

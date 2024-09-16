@@ -1,15 +1,15 @@
+import pmd901_agent_dec::*;
 class pmd901_sequence extends uvm_sequence #(pmd901_trans, pmd901_trans);
 
 // UVM Factory Registration Macro
 //
 `uvm_object_utils(pmd901_sequence)
 
-import pmd901_agent_dec::*;
 
 //------------------------------------------
 // Data Members (Outputs rand, inputs non-rand)
 //------------------------------------------
-signed bit[15:0] working_speed;
+bit signed [15:0] working_speed;
 
 //------------------------------------------
 // Constraints
@@ -34,11 +34,12 @@ function pmd901_sequence::new(string name = "pmd901_sequence");
 endfunction
 
 task pmd901_sequence::body;
-    super.body;
-  pmd901_agent_config m_cfg = pmd901_agent_config::get_config(m_sequencer);
+  pmd901_agent_config m_cfg;
   pmd901_trans req;
   pmd901_trans rsp;
+  super.body;
 
+  m_cfg = pmd901_agent_config::get_config(m_sequencer);
   req = pmd901_trans::type_id::create("req");
   rsp = pmd901_trans::type_id::create("rsp");
 

@@ -1,8 +1,8 @@
+import pmd901_bus_agent_pkg::*;
 class pmd901_bus_driver extends uvm_driver #(pmd901_bus_trans, pmd901_bus_trans);
 
 `uvm_component_utils(pmd901_bus_driver)
 
-import pmd901_bus_agent_pkg::*;
 
 protected virtual pmd901_bus_driver_bfm m_bfm;
 //------------------------------------------

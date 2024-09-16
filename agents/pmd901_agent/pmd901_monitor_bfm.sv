@@ -40,7 +40,7 @@ endtask
 task sample_on_bending_change();
 // make transaction when pin bending changes outside 
 // SPI transmit
-    @(bending iff csn);
+    @(bend iff csn);
     item.speed = 16'd0;
 endtask
 
@@ -59,7 +59,7 @@ task sample_on_spi_transmit();
         end
         forever begin: sample_data
             @mon_cb;
-            item.speed << 1;
+            item.speed = item.speed << 1;
             item.speed[0] = mon_cb.mosi;
         end
     join_any

@@ -1,9 +1,8 @@
+import pmd901_agent_pkg::*;
 class pmd901_monitor extends uvm_component;
 
 `uvm_component_utils(pmd901_monitor)
 
-import pmd901_agent_pkg::*;
-import pmd901_agent_dec::*;
 
 protected virtual pmd901_monitor_bfm m_bfm;
 //------------------------------------------

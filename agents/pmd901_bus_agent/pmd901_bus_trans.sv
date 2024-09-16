@@ -27,7 +27,7 @@ endfunction
 constraint pmd901_bus_trans::speed_cons{
     speed dist {
         16'd0:/ 2,
-        [16'hffff, 16'h7fff]:/ 8
+        [16'h0: 16'hffff]:/ 8
     };
 }
 
@@ -45,7 +45,7 @@ function void pmd901_bus_trans::do_copy(uvm_object rhs);
   bending = rhs_.bending;
 endfunction:do_copy
 
-function void do_print(uvm_printer printer);
+function void pmd901_bus_trans::do_print(uvm_printer printer);
     super.do_print(printer);
     printer.print_field_int("speed", speed, $bits(speed), UVM_DEC);
     printer.print_field_int("write enable", we, $bits(we), UVM_BIN);
