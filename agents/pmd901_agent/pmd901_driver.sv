@@ -1,4 +1,3 @@
-import pmd901_agent_pkg::*;
 class pmd901_driver extends uvm_driver #(pmd901_trans, pmd901_trans);
 
 `uvm_component_utils(pmd901_driver)

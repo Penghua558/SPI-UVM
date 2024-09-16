@@ -67,6 +67,6 @@ task pmd901_sequence::body;
   end
 endtask:body
 
-task read_n_drive(uvm_sequencer_base seqr, uvm_sequence_base parent = null);
+task pmd901_sequence::read_n_drive(uvm_sequencer_base seqr, uvm_sequence_base parent = null);
     this.start(seqr, parent); 
 endtask: read_n_drive

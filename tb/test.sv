@@ -100,7 +100,7 @@ endfunction: configure_pmd901_agent
 
 function void test::configure_pmd901_bus_agent(pmd901_bus_agent_config cfg);
   cfg.active = UVM_ACTIVE;
-endfunction: configure_pmd901_agent
+endfunction: configure_pmd901_bus_agent
 
 task test::main_phase(uvm_phase phase);
     pmd901_sequence pmd901_seq = pmd901_sequence::type_id::create("pmd901_seq");
@@ -112,13 +112,13 @@ task test::main_phase(uvm_phase phase);
 
     phase.raise_objection(this);
     fork
-        pmd901_seq.read_n_drive(m_env.pmd901_agent.m_sequencer);
+        pmd901_seq.read_n_drive(m_env.m_pmd901_agent.m_sequencer);
         begin
         // enable PMD901 first
             test_enable = 1'b1;
-            pmd901_enable_seq.set_enable(test_enable, m_env.pmd901_bus_agent.m_sequencer);
+            pmd901_enable_seq.set_enable(test_enable, m_env.m_pmd901_bus_agent.m_sequencer);
             repeat(60) begin
-                pmd901_speed_seq.rand_speed_bending(test_enable, m_env.pmd901_bus_agent.m_sequencer);
+                pmd901_speed_seq.rand_speed_bending(test_enable, m_env.m_pmd901_bus_agent.m_sequencer);
             end
             `uvm_info("TEST", "Finished generating speed stimulus", UVM_MEDIUM)
         end

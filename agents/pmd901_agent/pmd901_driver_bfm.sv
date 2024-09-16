@@ -78,7 +78,7 @@ task setup_on_spi_transmit(pmd901_trans req);
     disable fork;
 endtask
 
-task setup_phase(pm901_trans req);
+task setup_phase(pmd901_trans req);
     fork
         begin
         setup_on_power_change(req);

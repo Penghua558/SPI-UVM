@@ -1,4 +1,3 @@
-import pmd901_agent_pkg::*;
 class pmd901_monitor extends uvm_component;
 
 `uvm_component_utils(pmd901_monitor)
@@ -23,7 +22,7 @@ uvm_analysis_port #(pmd901_trans) ap;
 extern function new(string name = "pmd901_monitor", uvm_component parent = null);
 extern function void build_phase(uvm_phase phase);
 extern task run_phase(uvm_phase phase);
-extern function void pmd901_monitor::notify_transaction(pmd901_trans item);
+extern function void notify_transaction(pmd901_trans item);
 endclass: pmd901_monitor 
 
 function pmd901_monitor::new(string name = "pmd901_monitor", uvm_component parent = null);
