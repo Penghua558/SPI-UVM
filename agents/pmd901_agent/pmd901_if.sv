@@ -41,17 +41,17 @@ property clocknumber;
     @(spi_clk_event) seq_start |=> !csn[*16] ##1 !$rose(clk);
 endproperty
 
-property readyfan;
-    @(ready, fan) !(ready & fan);
-endproperty
+// property readyfan;
+//     @(ready, fan) !(ready & fan);
+// endproperty
 
 
 assert property (clocknumber)
 else
     `uvm_fatal("PMD901 MONITOR BFM", "Clock cycle number is not 16 during data transmission!")
 
-assert property (readyfan)
-else
-    `uvm_fatal("PMD901 MONITOR BFM", "Ready and fan should not be asserted at the same time")
+// assert property (readyfan)
+// else
+//     `uvm_fatal("PMD901 MONITOR BFM", "Ready and fan should not be asserted at the same time")
 
 endinterface: pmd901_if

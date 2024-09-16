@@ -37,7 +37,6 @@ task pmd901_sequence::body;
   pmd901_agent_config m_cfg;
   pmd901_trans req;
   pmd901_trans rsp;
-  super.body;
 
   m_cfg = pmd901_agent_config::get_config(m_sequencer);
   req = pmd901_trans::type_id::create("req");

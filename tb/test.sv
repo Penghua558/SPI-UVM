@@ -120,6 +120,7 @@ task test::main_phase(uvm_phase phase);
         // enable PMD901 first
             test_enable = 1'b1;
             pmd901_enable_seq.set_enable(test_enable, m_env.m_pmd901_bus_agent.m_sequencer);
+            `uvm_info("TEST", "Enabled PMD901", UVM_MEDIUM)
             repeat(60) begin
                 pmd901_speed_seq.rand_speed_bending(test_enable, m_env.m_pmd901_bus_agent.m_sequencer);
             end

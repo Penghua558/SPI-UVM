@@ -34,7 +34,6 @@ endfunction
 task pmd901_bus_bending_sequence::body;
     pmd901_bus_agent_config m_cfg = pmd901_bus_agent_config::get_config(m_sequencer);
     pmd901_bus_trans req;
-    super.body;
 
   req = pmd901_bus_trans::type_id::create("req");
 
