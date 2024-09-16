@@ -93,6 +93,7 @@ parameter [5:0] CS_N_HOLD_COUNT = 6'd3
   wire spi_ready_crossed; // signal of spi_ready crossed different clock domain
   wire spi_start; // asserted to start a new SPI transmit
   wire spi_start_crossed; // signal of spi_start crossed different clock domain
+  wire [15:0] motor_speed;
   
   spi_clgen clgen (.clk_in(clk), .rst(!rstn), 
                    .divider(SCLK_DIVIDER), .clk_out(sclk_gen_o), .pos_edge(pos_edge), 

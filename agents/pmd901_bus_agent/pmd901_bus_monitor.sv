@@ -29,7 +29,7 @@ function pmd901_bus_monitor::new(string name = "pmd901_bus_monitor", uvm_compone
   super.new(name, parent);
 endfunction
 
-function pmd901_bus_monitor::build_phase(uvm_phase phase);
+function void pmd901_bus_monitor::build_phase(uvm_phase phase);
     super.build_phase(phase);
     m_cfg = pmd901_bus_agent_config::get_config(this);
     m_bfm = m_cfg.mon_bfm;

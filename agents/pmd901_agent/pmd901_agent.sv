@@ -25,7 +25,7 @@ function pmd901_agent::new(string name = "pmd901_agent", uvm_component parent = 
   super.new(name, parent);
 endfunction
 
-function pmd901_agent::build_phase(uvm_phase phase);
+function void pmd901_agent::build_phase(uvm_phase phase);
     super.build_phase(phase);
     m_cfg = pmd901_agent_config::get_config(this);
     // Monitor is always present
