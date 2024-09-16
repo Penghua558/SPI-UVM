@@ -20,6 +20,9 @@
 // Class Description:
 // After setting dev_enable to 1, we randomize wdata and dev_bending 60 times.
 //
+import env_pkg::*;
+import pmd901_agent_pkg::*;
+import pmd901_bus_agent_pkg::*;
 class test extends uvm_test;
 
 // UVM Factory Registration Macro
@@ -63,30 +66,30 @@ function void test::build_phase(uvm_phase phase);
   // env configuration
   m_env_cfg = env_config::type_id::create("m_env_cfg");
 
-  configure_pmd901_agent(m_env_cfg.pmd901_agent_config);
-  configure_pmd901_bus_agent(m_env_cfg.pmd901_bus_agent_config);
+  configure_pmd901_agent(m_env_cfg.m_pmd901_agent_cfg);
+  configure_pmd901_bus_agent(m_env_cfg.m_pmd901_bus_agent_cfg);
 
   if (!uvm_config_db #(virtual pmd901_driver_bfm)::get(this, "", 
-      "PMD901_drv_bfm", m_env_cfg.pmd901_agent_config.drv_bfm))
+      "PMD901_drv_bfm", m_env_cfg.m_pmd901_agent_cfg.drv_bfm))
     `uvm_error("build_phase", "uvm_config_db #(virtual pmd901_driver_bfm)::get(...) failed");
   if (!uvm_config_db #(virtual pmd901_monitor_bfm)::get(this, "", 
-      "PMD901_drv_bfm", m_env_cfg.pmd901_agent_config.mon_bfm))
+      "PMD901_drv_bfm", m_env_cfg.m_pmd901_agent_cfg.mon_bfm))
     `uvm_error("build_phase", "uvm_config_db #(virtual pmd901_monitor_bfm)::get(...) failed");
 
   if (!uvm_config_db #(virtual pmd901_bus_driver_bfm)::get(this, "", 
-      "PMD901_BUS_drv_bfm", m_env_cfg.pmd901_bus_agent_config.drv_bfm))
+      "PMD901_BUS_drv_bfm", m_env_cfg.m_pmd901_bus_agent_cfg.drv_bfm))
     `uvm_error("build_phase", "uvm_config_db #(virtual pmd901_driver_bfm)::get(...) failed");
   if (!uvm_config_db #(virtual pmd901_bus_monitor_bfm)::get(this, "", 
-      "PMD901_BUS_drv_bfm", m_env_cfg.pmd901_bus_agent_config.mon_bfm))
+      "PMD901_BUS_drv_bfm", m_env_cfg.m_pmd901_bus_agent_cfg.mon_bfm))
     `uvm_error("build_phase", "uvm_config_db #(virtual pmd901_monitor_bfm)::get(...) failed");
 
   m_env = env::type_id::create("m_env", this);
 
   uvm_config_db #(uvm_object)::set(this, "m_env*", "env_config", m_env_cfg);
   uvm_config_db #(uvm_object)::set(this, "m_env*", 
-      "pmd901_agent_config", m_env_cfg.pmd901_agent_config);
+      "pmd901_agent_config", m_env_cfg.m_pmd901_agent_cfg);
   uvm_config_db #(uvm_object)::set(this, "m_env*", 
-      "pmd901_bus_agent_config", m_env_cfg.pmd901_bus_agent_config);
+      "pmd901_bus_agent_config", m_env_cfg.m_pmd901_bus_agent_cfg);
 endfunction: build_phase
 
 

@@ -4,8 +4,6 @@ class pmd901_bus_rand_speed_bending_sequence extends uvm_sequence #(pmd901_bus_t
 //
 `uvm_object_utils(pmd901_bus_rand_speed_bending_sequence)
 
-import pmd901_bus_agent_dec::*;
-
 //------------------------------------------
 // Data Members (Outputs rand, inputs non-rand)
 //------------------------------------------
@@ -33,9 +31,9 @@ function pmd901_bus_rand_speed_bending_sequence::new(string name = "pmd901_bus_r
 endfunction
 
 task pmd901_bus_rand_speed_bending_sequence::body;
-    super.body;
     pmd901_bus_agent_config m_cfg = pmd901_bus_agent_config::get_config(m_sequencer);
     pmd901_bus_trans req;
+    super.body;
 
   req = pmd901_bus_trans::type_id::create("req");
 
@@ -46,8 +44,8 @@ task pmd901_bus_rand_speed_bending_sequence::body;
   start_item(req);
 
   assert (req.randomize() with {
-      req.we = 1'b1;
-      req.enable = this.enable;
+      req.we == 1'b1;
+      req.enable == this.enable;
       }
   );
 
@@ -57,4 +55,4 @@ endtask:body
 task pmd901_bus_rand_speed_bending_sequence::rand_speed_bending(bit enable, uvm_sequencer_base seqr, uvm_sequence_base parent = null);
     this.enable = enable;
     this.start(seqr, parent); 
-endtask: enable
+endtask: rand_speed_bending 

@@ -76,6 +76,7 @@ pmd901_monitor_bfm PMD901_mon_bfm(
 );
 
 pmd901_bus_driver_bfm PMD901_BUS_drv_bfm(
+    .clk(PMD901_BUS_IF.clk),
     .rstn(PMD901_BUS_IF.rstn),
     .wdata(PMD901_BUS_IF.wdata),
     .we(PMD901_BUS_IF.we),
@@ -84,6 +85,7 @@ pmd901_bus_driver_bfm PMD901_BUS_drv_bfm(
 );
 
 pmd901_bus_monitor_bfm PMD901_BUS_mon_bfm(
+    .clk(PMD901_BUS_IF.clk),
     .rstn(PMD901_BUS_IF.rstn),
     .wdata(PMD901_BUS_IF.wdata),
     .we(PMD901_BUS_IF.we),
