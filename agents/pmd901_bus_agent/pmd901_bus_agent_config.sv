@@ -2,7 +2,7 @@ class pmd901_bus_agent_config extends uvm_object;
 
 localparam string s_my_config_id = "pmd901_bus_agent_config";
 
-`uvm_component_utils(pmd901_bus_agent_config)
+`uvm_object_utils(pmd901_bus_agent_config)
 
 virtual pmd901_bus_monitor_bfm mon_bfm;
 virtual pmd901_bus_driver_bfm drv_bfm;
@@ -26,7 +26,7 @@ task pmd901_bus_agent_config::wait_for_reset();
 endtask
 
 function pmd901_bus_agent_config::new(string name = "pmd901_bus_agent_config");
-  super.new(name, parent);
+  super.new(name);
 endfunction
 
 function pmd901_bus_agent_config pmd901_bus_agent_config::get_config(uvm_component c);

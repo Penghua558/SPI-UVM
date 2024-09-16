@@ -2,7 +2,7 @@ class pmd901_agent_config extends uvm_object;
 
 localparam string s_my_config_id = "pmd901_agent_config";
 
-`uvm_component_utils(pmd901_agent_config)
+`uvm_object_utils(pmd901_agent_config)
 
 virtual pmd901_monitor_bfm mon_bfm;
 virtual pmd901_driver_bfm drv_bfm;
@@ -32,7 +32,7 @@ task pmd901_agent_config::wait_inputs_isknown();
 endtask
 
 function pmd901_agent_config::new(string name = "pmd901_agent_config");
-  super.new(name, parent);
+  super.new(name);
   disable_spi_violation = 1'b0;
   disable_overheat = 1'b0;
   disable_close2overheat = 1'b0;

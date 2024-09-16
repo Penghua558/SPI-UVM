@@ -34,7 +34,7 @@ task drive(pmd901_bus_trans req);
     wdata <= req.speed;
     we <= req.we;
     dev_enable <= req.enable;
-    dev_bending <= req.dev_bending;
+    dev_bending <= req.bending;
 endtask: drive 
 
 endinterface: pmd901_bus_driver_bfm

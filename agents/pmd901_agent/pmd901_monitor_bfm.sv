@@ -30,21 +30,21 @@ task wait_inputs_isknown();
   end
 endtask: wait_inputs_isknown
 
-task sample_on_power_change();
+task sample_on_power_change(pmd901_trans item);
 // we are intrested the moment working PMD901 
 // is powered down or powered up
     @(park);
     item.speed = 16'd0;
 endtask
 
-task sample_on_bending_change();
+task sample_on_bending_change(pmd901_trans item);
 // make transaction when pin bending changes outside 
 // SPI transmit
     @(bend iff csn);
     item.speed = 16'd0;
 endtask
 
-task sample_on_spi_transmit();
+task sample_on_spi_transmit(pmd901_trans item);
     // if device is not powered up, then we wait
     // for it, since there's no intrest to transmit 
     // a powered down PMD901 transaction
@@ -74,13 +74,13 @@ task run();
     forever begin
         fork
             begin
-            sample_on_power_change();
+            sample_on_power_change(item);
             end
             begin
-            sample_on_bending_change();
+            sample_on_bending_change(item);
             end
             begin
-            sample_on_spi_transmit();
+            sample_on_spi_transmit(item);
             end
         join_any
         disable fork;

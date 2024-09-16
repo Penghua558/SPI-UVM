@@ -17,11 +17,12 @@
 //   permissions and limitations under the License.
 //------------------------------------------------------------
 
- `include "agents/pmd901_slave_agent/pmd901_if.sv"
- `include "agents/pmd901_slave_agent/pmd901_agent_dec.sv"
- `include "agents/pmd901_slave_agent/pmd901_agent_pkg.sv"
- `include "agents/pmd901_slave_agent/pmd901_driver_bfm.sv"
- `include "agents/pmd901_slave_agent/pmd901_monitor_bfm.sv"
+ `include "agents/pmd901_agent/pmd901_if.sv"
+ `include "agents/pmd901_agent/pmd901_agent_dec.sv"
+ `include "agents/pmd901_agent/pmd901_timecheck.sv"
+ `include "agents/pmd901_agent/pmd901_agent_pkg.sv"
+ `include "agents/pmd901_agent/pmd901_driver_bfm.sv"
+ `include "agents/pmd901_agent/pmd901_monitor_bfm.sv"
  `include "./agents/pmd901_bus_agent/pmd901_bus_if.sv"
  `include "./agents/pmd901_bus_agent/pmd901_bus_agent_pkg.sv"
  `include "./agents/pmd901_bus_agent/pmd901_bus_driver_bfm.sv"
@@ -109,9 +110,9 @@ spi_top#(
     .fan(PMD901_IF.fan),
     .ready(PMD901_IF.ready),
     .park(PMD901_IF.park),
-    .bending(PMD901_IF.bending),
+    .bending(PMD901_IF.bend),
     .sclk(PMD901_IF.clk),
-    .cs_n(PMD901_IF.cs_n),
+    .cs_n(PMD901_IF.csn),
     .mosi(PMD901_IF.mosi)
 );
 

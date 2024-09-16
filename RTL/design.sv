@@ -48,6 +48,7 @@
 `include "spi_defines.v"
 `include "spi_clgen.v"
 `include "spi_shift.v"
+`include "spi_reg.v"
 `include "cdc_handshaking.v"
 `include "spi_initiator.v"
 
