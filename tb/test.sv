@@ -115,17 +115,17 @@ task test::main_phase(uvm_phase phase);
 
     phase.raise_objection(this);
     fork
-        forever begin
-            pmd901_seq.read_n_drive(m_env.m_pmd901_agent.m_sequencer);
-        end
         begin
         // enable PMD901 first
+            #3000ns;
             `uvm_info("TEST", "About to enable PMD901", UVM_MEDIUM)
             test_enable = 1'b1;
             pmd901_enable_seq.set_enable(test_enable, m_env.m_pmd901_bus_agent.m_sequencer);
             `uvm_info("TEST", "Enabled PMD901", UVM_MEDIUM)
+            pmd901_seq.read_n_drive(m_env.m_pmd901_agent.m_sequencer);
             repeat(60) begin
                 pmd901_speed_seq.rand_speed_bending(test_enable, m_env.m_pmd901_bus_agent.m_sequencer);
+                pmd901_seq.read_n_drive(m_env.m_pmd901_agent.m_sequencer);
             end
             `uvm_info("TEST", "Finished generating speed stimulus", UVM_MEDIUM)
         end

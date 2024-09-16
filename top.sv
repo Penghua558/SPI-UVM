@@ -144,4 +144,9 @@ initial begin
   PRESETn = 1;
 end
 
+initial begin
+  $dumpfile("dump.vcd");
+  $dumpvars;
+end
+
 endmodule: top
