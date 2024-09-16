@@ -115,9 +115,12 @@ task test::main_phase(uvm_phase phase);
 
     phase.raise_objection(this);
     fork
-        pmd901_seq.read_n_drive(m_env.m_pmd901_agent.m_sequencer);
+        forever begin
+            pmd901_seq.read_n_drive(m_env.m_pmd901_agent.m_sequencer);
+        end
         begin
         // enable PMD901 first
+            `uvm_info("TEST", "About to enable PMD901", UVM_MEDIUM)
             test_enable = 1'b1;
             pmd901_enable_seq.set_enable(test_enable, m_env.m_pmd901_bus_agent.m_sequencer);
             `uvm_info("TEST", "Enabled PMD901", UVM_MEDIUM)

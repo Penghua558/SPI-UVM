@@ -34,17 +34,16 @@ function pmd901_sequence::new(string name = "pmd901_sequence");
 endfunction
 
 task pmd901_sequence::body;
-  pmd901_agent_config m_cfg;
-  pmd901_trans req;
-  pmd901_trans rsp;
+    pmd901_agent_config m_cfg;
+    pmd901_trans req;
+    pmd901_trans rsp;
 
-  m_cfg = pmd901_agent_config::get_config(m_sequencer);
-  req = pmd901_trans::type_id::create("req");
-  rsp = pmd901_trans::type_id::create("rsp");
+    m_cfg = pmd901_agent_config::get_config(m_sequencer);
+    req = pmd901_trans::type_id::create("req");
+    rsp = pmd901_trans::type_id::create("rsp");
 
-  m_cfg.wait_inputs_isknown();
-  // Slave sequence finishes after 60 transfers:
-  forever begin
+    m_cfg.wait_inputs_isknown();
+    // Slave sequence finishes after 60 transfers:
     // Get request
     start_item(req);
     finish_item(req);
@@ -63,7 +62,6 @@ task pmd901_sequence::body;
         }
     );
     finish_item(rsp);
-  end
 endtask:body
 
 task pmd901_sequence::read_n_drive(uvm_sequencer_base seqr, uvm_sequence_base parent = null);
