@@ -2,3 +2,6 @@ csrc/
 simv.daidir/
 dump.vcd
 simv
+tags
+tags.lock
+tags.temp
