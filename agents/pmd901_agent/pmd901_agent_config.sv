@@ -41,6 +41,7 @@ endfunction
 function pmd901_agent_config pmd901_agent_config::get_config(uvm_component c);
     pmd901_agent_config t;
     if (!uvm_config_db#(pmd901_agent_config)::get(c, "", s_my_config_id, t))
-        `uvm_fatal(get_full_name(), $sformatf("Failed to get config %s", s_my_config_id))
+        `uvm_fatal(s_my_config_id, $sformatf("Failed to get config %s", 
+            s_my_config_id))
     return t;
 endfunction

@@ -25,12 +25,12 @@ work:
 	vlib work
 
 build: 
-	vlog -64 -incr +incdir+./agents/apb_slave_agent ./agents/apb_slave_agent/apb_slave_agent_pkg.sv
-	vlog -64 -incr ./agents/apb_slave_agent/apb_if.sv
-	vlog -64 -incr ./agents/apb_slave_agent/apb_slave_driver_bfm.sv
-	vlog -64 -incr ./agents/apb_slave_agent/apb_slave_monitor_bfm.sv
-	vlog -64 -incr ./rtl/apb3_wlm_host.sv
-	vlog -64 -incr +incdir+./tb ./tb/env_pkg.sv ./tb/hdl_top.sv ./tb/hvl_top.sv
+	vlog -64 -incr -F ./agents/pmd901_agent/pmd901_agent_filelist.f
+	# vlog -64 -incr ./agents/apb_slave_agent/apb_if.sv
+	# vlog -64 -incr ./agents/apb_slave_agent/apb_slave_driver_bfm.sv
+	# vlog -64 -incr ./agents/apb_slave_agent/apb_slave_monitor_bfm.sv
+	# vlog -64 -incr ./rtl/apb3_wlm_host.sv
+	# vlog -64 -incr +incdir+./tb ./tb/env_pkg.sv ./tb/hdl_top.sv ./tb/hvl_top.sv
 
 sim:
 	vsim -64 -voptargs=+acc -sv_seed random +UVM_TESTNAME=test hdl_top hvl_top -c -do "run -all; quit" -wlf slave_agent.wlf

@@ -16,9 +16,10 @@ endspecify
 
 always@(*) begin
     if (csn_hold_notifier)
-        `uvm_fatal("PMD901 TIMECHECK", "Hold sclk at least 400ns after SPI transmission starts")
+        `uvm_fatal("PMD901 TIMECHECK", "Hold sclk at least 400ns after SPI \
+        transmission starts")
     if (spi_start_notifier)
-        `uvm_fatal("PMD901 TIMECHECK", "wait at least 20us between 2 SPI transmissions")
+        `uvm_fatal("PMD901 TIMECHECK", "wait at least 20us between 2 SPI \
+        transmissions")
 end
-
 endmodule

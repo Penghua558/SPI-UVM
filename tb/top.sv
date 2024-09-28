@@ -1,34 +1,11 @@
-//------------------------------------------------------------
-//   Copyright 2010-2018 Mentor Graphics Corporation
-//   All Rights Reserved Worldwide
-//
-//   Licensed under the Apache License, Version 2.0 (the
-//   "License"); you may not use this file except in
-//   compliance with the License.  You may obtain a copy of
-//   the License at
-//
-//       http://www.apache.org/licenses/LICENSE-2.0
-//
-//   Unless required by applicable law or agreed to in
-//   writing, software distributed under the License is
-//   distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-//   CONDITIONS OF ANY KIND, either express or implied.  See
-//   the License for the specific language governing
-//   permissions and limitations under the License.
-//------------------------------------------------------------
-
- `include "agents/pmd901_agent/pmd901_if.sv"
- `include "agents/pmd901_agent/pmd901_agent_dec.sv"
- `include "agents/pmd901_agent/pmd901_timecheck.sv"
- `include "agents/pmd901_agent/pmd901_agent_pkg.sv"
- `include "agents/pmd901_agent/pmd901_driver_bfm.sv"
- `include "agents/pmd901_agent/pmd901_monitor_bfm.sv"
- `include "./agents/pmd901_bus_agent/pmd901_bus_if.sv"
- `include "./agents/pmd901_bus_agent/pmd901_bus_agent_pkg.sv"
- `include "./agents/pmd901_bus_agent/pmd901_bus_driver_bfm.sv"
- `include "./agents/pmd901_bus_agent/pmd901_bus_monitor_bfm.sv"
- `include "tb/env_pkg.sv"
- `include "tb/test.sv"
+`include "agents/pmd901_agent/pmd901_agent_dec.sv"
+`include "agents/pmd901_agent/pmd901_agent_pkg.sv"
+`include "./agents/pmd901_bus_agent/pmd901_bus_if.sv"
+`include "./agents/pmd901_bus_agent/pmd901_bus_agent_pkg.sv"
+`include "./agents/pmd901_bus_agent/pmd901_bus_driver_bfm.sv"
+`include "./agents/pmd901_bus_agent/pmd901_bus_monitor_bfm.sv"
+`include "tb/env_pkg.sv"
+`include "tb/test.sv"
 module top;
 
 import env_pkg::*;
@@ -121,11 +98,15 @@ spi_top#(
 // Virtual interface wrapping & run_test()
 initial begin //tbx vif_binding_block
   import uvm_pkg::uvm_config_db;
-  uvm_config_db #(virtual pmd901_monitor_bfm)::set(null, "uvm_test_top", "PMD901_mon_bfm", PMD901_mon_bfm);
-  uvm_config_db #(virtual pmd901_driver_bfm) ::set(null, "uvm_test_top", "PMD901_drv_bfm", PMD901_drv_bfm);
+  uvm_config_db #(virtual pmd901_monitor_bfm)::set(null, "uvm_test_top", 
+      "PMD901_mon_bfm", PMD901_mon_bfm);
+  uvm_config_db #(virtual pmd901_driver_bfm) ::set(null, "uvm_test_top", 
+      "PMD901_drv_bfm", PMD901_drv_bfm);
 
-  uvm_config_db #(virtual pmd901_bus_monitor_bfm)::set(null, "uvm_test_top", "PMD901_BUS_mon_bfm", PMD901_BUS_mon_bfm);
-  uvm_config_db #(virtual pmd901_bus_driver_bfm)::set(null, "uvm_test_top", "PMD901_BUS_drv_bfm", PMD901_BUS_drv_bfm);
+  uvm_config_db #(virtual pmd901_bus_monitor_bfm)::set(null, "uvm_test_top", 
+      "PMD901_BUS_mon_bfm", PMD901_BUS_mon_bfm);
+  uvm_config_db #(virtual pmd901_bus_driver_bfm)::set(null, "uvm_test_top", 
+      "PMD901_BUS_drv_bfm", PMD901_BUS_drv_bfm);
   run_test();
 end
 
@@ -145,8 +126,7 @@ initial begin
 end
 
 initial begin
-  $dumpfile("dump.vcd");
-  $dumpvars;
+  $wlfdumpvars();
 end
 
 endmodule: top
