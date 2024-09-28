@@ -1,6 +1,6 @@
 interface pmd901_bus_driver_bfm (
-    input logic clk,
-    input logic rstn,
+    input logic i_clk,
+    input logic i_rstn,
     output logic [15:0] wdata,
     output logic we,
     output logic dev_enable,
@@ -20,17 +20,17 @@ import pmd901_bus_agent_pkg::*;
 //------------------------------------------
 
 task reset();
-    while (!rstn) begin
+    while (!i_rstn) begin
         wdata <= 16'd0;
         we <= 1'b0;
         dev_enable <= 1'b0;
         dev_bending <= 1'b0;
-        @(posedge clk);
+        @(posedge i_clk);
     end
 endtask: reset 
 
 task drive(pmd901_bus_trans req);
-    @(posedge clk);
+    @(posedge i_clk);
     wdata <= req.speed;
     we <= req.we;
     dev_enable <= req.enable;

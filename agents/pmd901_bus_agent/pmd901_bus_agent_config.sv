@@ -29,9 +29,11 @@ function pmd901_bus_agent_config::new(string name = "pmd901_bus_agent_config");
   super.new(name);
 endfunction
 
-function pmd901_bus_agent_config pmd901_bus_agent_config::get_config(uvm_component c);
+function pmd901_bus_agent_config pmd901_bus_agent_config::get_config(
+    uvm_component c);
     pmd901_bus_agent_config t;
     if (!uvm_config_db#(pmd901_bus_agent_config)::get(c, "", s_my_config_id, t))
-        `uvm_fatal("PMD901 CONFIG", $sformatf("Failed to get config %s", s_my_config_id))
+        `uvm_fatal(s_my_config_id, $sformatf("Failed to get config %s", 
+                    s_my_config_id))
     return t;
 endfunction

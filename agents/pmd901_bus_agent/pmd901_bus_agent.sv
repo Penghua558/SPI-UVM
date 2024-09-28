@@ -16,12 +16,14 @@ pmd901_bus_sequencer m_sequencer;
 // Methods
 //------------------------------------------
 // Standard UVM Methods:
-extern function new(string name = "pmd901_bus_agent", uvm_component parent = null);
+extern function new(string name = "pmd901_bus_agent", 
+                    uvm_component parent = null);
 extern function void build_phase(uvm_phase phase);
 extern function void connect_phase(uvm_phase phase);
 endclass: pmd901_bus_agent 
 
-function pmd901_bus_agent::new(string name = "pmd901_bus_agent", uvm_component parent = null);
+function pmd901_bus_agent::new(string name = "pmd901_bus_agent", 
+    uvm_component parent = null);
   super.new(name, parent);
 endfunction
 

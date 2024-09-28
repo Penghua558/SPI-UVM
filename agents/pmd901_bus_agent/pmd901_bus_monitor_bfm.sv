@@ -1,6 +1,6 @@
 interface pmd901_bus_monitor_bfm (
-    input logic clk, 
-    input logic rstn,
+    input logic i_clk, 
+    input logic i_rstn,
     input logic [15:0] wdata,
     input logic we,
     input logic dev_enable,
@@ -20,7 +20,7 @@ pmd901_bus_monitor proxy;
 // Methods
 //------------------------------------------
 task wait_for_reset();
-    wait(rstn);
+    wait(i_rstn);
 endtask: wait_for_reset 
 
 task run();
@@ -29,7 +29,7 @@ task run();
     item = pmd901_bus_trans::type_id::create("item");
 
     forever begin
-        @(posedge clk);
+        @(posedge i_clk);
         item.speed = wdata;
         item.we = we;
         item.enable = dev_enable;

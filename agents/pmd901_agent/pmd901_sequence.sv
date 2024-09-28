@@ -24,7 +24,8 @@ bit signed [15:0] working_speed;
 // Standard UVM Methods:
 extern function new(string name = "pmd901_sequence");
 extern task body;
-extern task read_n_drive(uvm_sequencer_base seqr, uvm_sequence_base parent = null);
+extern task read_n_drive(uvm_sequencer_base seqr, 
+    uvm_sequence_base parent = null);
 
 endclass:pmd901_sequence
 
@@ -64,6 +65,7 @@ task pmd901_sequence::body;
     finish_item(rsp);
 endtask:body
 
-task pmd901_sequence::read_n_drive(uvm_sequencer_base seqr, uvm_sequence_base parent = null);
+task pmd901_sequence::read_n_drive(uvm_sequencer_base seqr, 
+    uvm_sequence_base parent = null);
     this.start(seqr, parent); 
 endtask: read_n_drive

@@ -18,7 +18,8 @@ extern function void build_phase(uvm_phase phase);
 extern task run_phase(uvm_phase phase);
 endclass: pmd901_driver 
 
-function pmd901_driver::new(string name = "pmd901_driver", uvm_component parent = null);
+function pmd901_driver::new(string name = "pmd901_driver", 
+    uvm_component parent = null);
   super.new(name, parent);
 endfunction
 

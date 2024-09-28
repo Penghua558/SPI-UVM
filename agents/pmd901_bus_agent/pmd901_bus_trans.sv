@@ -53,7 +53,8 @@ function void pmd901_bus_trans::do_print(uvm_printer printer);
     printer.print_field_int("PMD901 bending", bending, $bits(bending), UVM_BIN);
 endfunction
 
-function bit pmd901_bus_trans::do_compare(uvm_object rhs, uvm_comparer comparer);
+function bit pmd901_bus_trans::do_compare(uvm_object rhs, 
+                                uvm_comparer comparer);
   pmd901_bus_trans rhs_;
 
   if(!$cast(rhs_, rhs)) begin

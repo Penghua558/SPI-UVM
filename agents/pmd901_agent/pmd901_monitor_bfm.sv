@@ -11,8 +11,8 @@ interface pmd901_monitor_bfm (
 );
 
 clocking mon_cb@(posedge clk);
-   input mosi; 
-endclocking: mon_cb 
+    input mosi;
+endclocking: mon_cb
 
 import pmd901_agent_pkg::*;
 
@@ -31,14 +31,14 @@ task wait_inputs_isknown();
 endtask: wait_inputs_isknown
 
 task sample_on_power_change(pmd901_trans item);
-// we are intrested the moment working PMD901 
+// we are intrested the moment working PMD901
 // is powered down or powered up
     @(park);
     item.speed = 16'd0;
 endtask
 
 task sample_on_bending_change(pmd901_trans item);
-// make transaction when pin bending changes outside 
+// make transaction when pin bending changes outside
 // SPI transmit
     @(bend iff csn);
     item.speed = 16'd0;
@@ -46,10 +46,10 @@ endtask
 
 task sample_on_spi_transmit(pmd901_trans item);
     // if device is not powered up, then we wait
-    // for it, since there's no intrest to transmit 
+    // for it, since there's no intrest to transmit
     // a powered down PMD901 transaction
     wait(park == 1'b1);
-    // wait for csn pulled down to initiate a 
+    // wait for csn pulled down to initiate a
     // SPI transmit
     @(negedge csn);
 
@@ -82,7 +82,7 @@ task run();
             begin
             sample_on_spi_transmit(item);
             end
-        join_any
+        join_any;
         disable fork;
         
         $cast(cloned_item, item.clone());

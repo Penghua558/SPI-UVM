@@ -1,4 +1,4 @@
-class pmd901_bus_driver extends uvm_driver #(pmd901_bus_trans, pmd901_bus_trans);
+class pmd901_bus_driver extends uvm_driver #(pmd901_bus_trans);
 
 `uvm_component_utils(pmd901_bus_driver)
 
@@ -13,12 +13,14 @@ pmd901_bus_agent_config m_cfg;
 // Methods
 //------------------------------------------
 // Standard UVM Methods:
-extern function new(string name = "pmd901_bus_driver", uvm_component parent = null);
+extern function new(string name = "pmd901_bus_driver", 
+                    uvm_component parent = null);
 extern function void build_phase(uvm_phase phase);
 extern task run_phase(uvm_phase phase);
 endclass: pmd901_bus_driver 
 
-function pmd901_bus_driver::new(string name = "pmd901_bus_driver", uvm_component parent = null);
+function pmd901_bus_driver::new(string name = "pmd901_bus_driver", 
+                                uvm_component parent = null);
   super.new(name, parent);
 endfunction
 

@@ -19,13 +19,15 @@ uvm_analysis_port #(pmd901_trans) ap;
 // Methods
 //------------------------------------------
 // Standard UVM Methods:
-extern function new(string name = "pmd901_monitor", uvm_component parent = null);
+extern function new(string name = "pmd901_monitor", 
+    uvm_component parent = null);
 extern function void build_phase(uvm_phase phase);
 extern task run_phase(uvm_phase phase);
 extern function void notify_transaction(pmd901_trans item);
 endclass: pmd901_monitor 
 
-function pmd901_monitor::new(string name = "pmd901_monitor", uvm_component parent = null);
+function pmd901_monitor::new(string name = "pmd901_monitor", 
+    uvm_component parent = null);
   super.new(name, parent);
 endfunction
 
