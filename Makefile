@@ -25,11 +25,8 @@ work:
 	vlib work
 
 build: 
-	# vlog -64 -incr -F ./agents/pmd901_agent/pmd901_agent_filelist.f
-	# vlog -64 -incr -F ./agents/pmd901_bus_agent/pmd901_bus_agent_filelist.f
 	vlog -64 -incr -override_timescale 1ns/100ps -F ./RTL/rtl_filelist.f
 	vlog -64 -incr -override_timescale 1ns/100ps -F ./env_filelist.f
-	# vlog -64 -incr +incdir+./tb ./tb/env_pkg.sv ./tb/hdl_top.sv ./tb/hvl_top.sv
 
 sim:
 	vsim -64 -voptargs=+acc -sv_seed random +UVM_TESTNAME=test top -c -do "run -all; quit" -wlf test.wlf
