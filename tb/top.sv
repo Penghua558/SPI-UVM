@@ -1,9 +1,5 @@
-`include "agents/pmd901_agent/pmd901_agent_dec.sv"
 `include "agents/pmd901_agent/pmd901_agent_pkg.sv"
-`include "./agents/pmd901_bus_agent/pmd901_bus_if.sv"
-`include "./agents/pmd901_bus_agent/pmd901_bus_agent_pkg.sv"
-`include "./agents/pmd901_bus_agent/pmd901_bus_driver_bfm.sv"
-`include "./agents/pmd901_bus_agent/pmd901_bus_monitor_bfm.sv"
+`include "agents/pmd901_bus_agent/pmd901_bus_agent_pkg.sv"
 `include "tb/env_pkg.sv"
 `include "tb/test.sv"
 module top;

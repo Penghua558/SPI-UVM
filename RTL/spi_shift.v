@@ -38,22 +38,19 @@
 ////                                                              ////
 //////////////////////////////////////////////////////////////////////
 
-//`include "spi_defines.v"
-//`include "timescale.v"
-
-module spi_shift #(
+module spi_shift#(
     parameter [5:0] CS_N_HOLD_COUNT = 6'd3
 )(
     // system clock is esstienaly the same as s_clk, except s_clk will be
     // pulled HIGH once SPI transmit is not undergoing.
-    input wire clk, 
-    input wire rst, 
+    input wire clk,
+    input wire rst,
     input wire spi_start,
-    input wire [15:0] p_in, 
+    input wire [15:0] p_in,
 
     input wire miso,
-    output reg spi_ready, 
-    output reg s_clk, 
+    output reg spi_ready,
+    output reg s_clk,
     output reg cs_n,
     output reg mosi // MSB is transmitted at first
 );

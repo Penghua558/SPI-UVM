@@ -49,8 +49,10 @@ endclass: env_config
 
 function env_config::new(string name = "env_config");
   super.new(name);
-  m_pmd901_agent_cfg = pmd901_agent_config::type_id::create("m_pmd901_agent_cfg");
-  m_pmd901_bus_agent_cfg = pmd901_bus_agent_config::type_id::create("m_pmd901_bus_agent_cfg");
+  m_pmd901_agent_cfg = pmd901_agent_config::type_id::create(
+      "m_pmd901_agent_cfg");
+  m_pmd901_bus_agent_cfg = pmd901_bus_agent_config::type_id::create(
+      "m_pmd901_bus_agent_cfg");
 endfunction
 
 //
@@ -74,8 +76,8 @@ function env_config env_config::get_config( uvm_component c );
 
   if( !$cast( t , o ) ) begin
     c.uvm_report_error( s_my_config_type_error_id ,
-                        $sformatf("config %s associated with config %s is not of type my_config" ,
-                                   o.sprint() , s_my_config_id ) ,
+                        $sformatf("config %s associated with config %s is \
+                        not of type my_config" , o.sprint() , s_my_config_id ) ,
                         UVM_NONE , `uvm_file , `uvm_line );
   end
 

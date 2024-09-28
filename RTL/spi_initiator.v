@@ -1,4 +1,4 @@
-module spi_initiator # (
+module spi_initiator#(
     parameter [11:0] SPI_TRANSMIT_DELAY = 12'd2001
 )(
     // clock frequency 100MHz
@@ -13,9 +13,9 @@ module spi_initiator # (
 reg [11:0] cnt4spi_start;
 
 always @(posedge clk or negedge rstn) begin
-    if (!rstn)
+    if (!rstn) begin
         cnt4spi_start <= 12'd0;
-    else begin
+    end else begin
         if (!cnt4spi_start && spi_ready) begin
             cnt4spi_start <= cnt4spi_start + 12'd1;
         end else begin

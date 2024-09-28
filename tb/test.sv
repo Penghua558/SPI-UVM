@@ -52,17 +52,21 @@ function void test::build_phase(uvm_phase phase);
 
   if (!uvm_config_db #(virtual pmd901_driver_bfm)::get(this, "", 
       "PMD901_drv_bfm", m_env_cfg.m_pmd901_agent_cfg.drv_bfm))
-    `uvm_error("build_phase", "uvm_config_db #(virtual pmd901_driver_bfm)::get(...) failed");
+    `uvm_error("build_phase", "uvm_config_db #(virtual \
+        pmd901_driver_bfm)::get() failed");
   if (!uvm_config_db #(virtual pmd901_monitor_bfm)::get(this, "", 
       "PMD901_mon_bfm", m_env_cfg.m_pmd901_agent_cfg.mon_bfm))
-    `uvm_error("build_phase", "uvm_config_db #(virtual pmd901_monitor_bfm)::get(...) failed");
+    `uvm_error("build_phase", "uvm_config_db #(virtual \
+        pmd901_monitor_bfm)::get() failed");
 
   if (!uvm_config_db #(virtual pmd901_bus_driver_bfm)::get(this, "", 
       "PMD901_BUS_drv_bfm", m_env_cfg.m_pmd901_bus_agent_cfg.drv_bfm))
-    `uvm_error("build_phase", "uvm_config_db #(virtual pmd901_bus_driver_bfm)::get(...) failed");
+    `uvm_error("build_phase", "uvm_config_db #(virtual \
+        pmd901_bus_driver_bfm)::get(...) failed");
   if (!uvm_config_db #(virtual pmd901_bus_monitor_bfm)::get(this, "", 
       "PMD901_BUS_mon_bfm", m_env_cfg.m_pmd901_bus_agent_cfg.mon_bfm))
-    `uvm_error("build_phase", "uvm_config_db #(virtual pmd901_bus_monitor_bfm)::get(...) failed");
+    `uvm_error("build_phase", "uvm_config_db #(virtual \
+        pmd901_bus_monitor_bfm)::get(...) failed");
 
   m_env = env::type_id::create("m_env", this);
 
@@ -92,7 +96,8 @@ task test::main_phase(uvm_phase phase);
     pmd901_bus_enable_sequence pmd901_enable_seq = 
         pmd901_bus_enable_sequence::type_id::create("pmd901_enable_seq");
     pmd901_bus_rand_speed_bending_sequence pmd901_speed_seq = 
-        pmd901_bus_rand_speed_bending_sequence::type_id::create("pmd901_speed_seq");
+        pmd901_bus_rand_speed_bending_sequence::type_id::create(
+        "pmd901_speed_seq");
 
     int i = 0;
     super.main_phase(phase);
@@ -103,13 +108,16 @@ task test::main_phase(uvm_phase phase);
             #3000ns;
             `uvm_info("TEST", "About to enable PMD901", UVM_MEDIUM)
             test_enable = 1'b1;
-            pmd901_enable_seq.set_enable(test_enable, m_env.m_pmd901_bus_agent.m_sequencer);
+            pmd901_enable_seq.set_enable(test_enable, 
+                m_env.m_pmd901_bus_agent.m_sequencer);
             `uvm_info("TEST", "Enabled PMD901", UVM_MEDIUM)
             pmd901_seq.read_n_drive(m_env.m_pmd901_agent.m_sequencer);
             repeat(40) begin
                 i++;
-                `uvm_info("TEST", $sformatf("sequence number: %0d/60", i), UVM_MEDIUM)
-                pmd901_speed_seq.rand_speed_bending(test_enable, m_env.m_pmd901_bus_agent.m_sequencer);
+                `uvm_info("TEST", $sformatf("sequence number: %0d/60", i), 
+                    UVM_MEDIUM)
+                pmd901_speed_seq.rand_speed_bending(test_enable, 
+                    m_env.m_pmd901_bus_agent.m_sequencer);
                 pmd901_seq.read_n_drive(m_env.m_pmd901_agent.m_sequencer);
             end
             `uvm_info("TEST", "Finished generating speed stimulus", UVM_MEDIUM)

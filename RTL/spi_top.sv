@@ -52,7 +52,7 @@
 `include "cdc_handshaking.v"
 `include "spi_initiator.v"
 
-module spi_top #(
+module spi_top#(
 // divide input clock frequency by SCLK_DIVIDER*2
 parameter [7:0] SCLK_DIVIDER = 8'd8,
 parameter [11:0] SPI_TRANSMIT_DELAY = 12'd2001,
