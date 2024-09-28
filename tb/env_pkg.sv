@@ -25,9 +25,12 @@ package env_pkg;
 import uvm_pkg::*;
 `include "uvm_macros.svh"
 
+import pmd901_agent_pkg::*;
+import pmd901_bus_agent_pkg::*;
 
 // Includes:
 `include "env_config.svh"
 `include "env.svh"
+`include "test.sv"
 
 endpackage: env_pkg
