@@ -8,4 +8,4 @@ tags.temp
 work/
 transcript
 *.wlf
-tr_db.log
+*.log

@@ -2,8 +2,6 @@
 // After setting dev_enable to 1, we randomize wdata and dev_bending 60 times.
 //
 class test extends uvm_test;
-//import pmd901_bus_agent_pkg::*;
-//import pmd901_agent_pkg::*;
 
 // UVM Factory Registration Macro
 //
