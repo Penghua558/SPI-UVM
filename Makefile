@@ -17,7 +17,11 @@
 #   the License for the specific language governing
 #   permissions and limitations under the License.
 #------------------------------------------------------------------------------
-DO_COMMAND := "run 0; uvm setverbosity UVM_LOW; run -all; quit"
+TESTNAME := test
+SEED := random
+TIMESCALE := 1ns/100ps
+UVM_VERBOSITY := UVM_MEDIUM
+DO_COMMAND := "run 0; uvm setverbosity $(UVM_VERBOSITY); run -all; quit"
 
 all: work build sim
 
@@ -26,12 +30,12 @@ tarball: clean_up tar
 work:
 	vlib work
 
-build: 
-	vlog -64 -incr -override_timescale 1ns/100ps -F ./RTL/rtl_filelist.f -l comp_rtl.log
-	vlog -64 -incr -override_timescale 1ns/100ps -F ./env_filelist.f -l comp_env.log
+build:
+	vlog -64 -incr -override_timescale $(TIMESCALE) -F ./RTL/rtl_filelist.f -l comp_rtl.log
+	vlog -64 -incr -override_timescale $(TIMESCALE) -F ./env_filelist.f -l comp_env.log
 
 sim:
-	vsim -64 -voptargs=+acc -uvmcontrol=all,-certe -sv_seed random +UVM_TESTNAME=test top -c -do $(DO_COMMAND) -wlf test.wlf -l sim.log
+	vsim -64 -voptargs=+acc -uvmcontrol=all,-certe -sv_seed $(SEED) +UVM_TESTNAME=$(TESTNAME) top -c -do $(DO_COMMAND) -wlf test.wlf -l sim.log
 
 clean_up:
 	rm -rf work ../*.tgz
