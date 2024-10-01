@@ -20,7 +20,7 @@ use strict;
 use Getopt::Long;
 use Pod::Usage;
 
-our $version_number = '0.3';
+our $version_number = 'v0.5';
 
 # switch to show help message
 my $help = '';
@@ -41,7 +41,7 @@ my $timescale = '';
 
 GetOptions ("help" => \$help,
             "version" => \$version,
-            "compile" => \$compile,
+            "com" => \$compile,
             "sim=s" => \$simulation,
             "run=s" => \$com_n_sim,
             "seed=i" => \$seed,
@@ -56,8 +56,7 @@ if($version){
 }
 
 if($help){
-    print("gaeg\n");
-    exit 0;
+    pod2usage(-verbose => 2);
 }
 
 if($compile){
@@ -70,13 +69,14 @@ if($compile){
 }
 
 if($simulation){
-    my $simulation_cmd = "make sim ".&pass_simulation_args;
+    my $simulation_cmd = "make sim ".&pass_simulation_args($simulation);
     system($simulation_cmd);
     exit 0;
 }
 
 if($com_n_sim){
-    my $run_cmd = "make all ".&pass_compile_args.&pass_simulation_args;
+    my $run_cmd = "make all ".&pass_compile_args.
+                    &pass_simulation_args($com_n_sim);
     system($run_cmd);
     exit 0;
 }
@@ -91,7 +91,7 @@ sub pass_compile_args{
 
 sub pass_simulation_args{
     my $simulation_args= '';
-    $simulation_args .= "TESTNAME=$simulation ";
+    $simulation_args .= "TESTNAME=$_[0]";
     if ($seed){
         $simulation_args .= "SEED=$seed ";
     }
@@ -107,3 +107,106 @@ sub show_version{
     print("Version $version_number\n");
     print("Made at 2024 September 30th, by Penghua Chen\n");
 }
+
+__END__
+=head1 NAME
+
+musiq.pl - a Perl script to help user compile and run simulation on Questasim
+
+=head1 SYNOPSIS
+
+musiq.pl [--com|--sim|--run] [options]
+
+ Options:
+   --help|-h            brief help message
+   --version|-v         show script's version number and author
+   --com|-c         compile this verification environment and RTL code
+   --sim| <testcase>  run simulation with testcase of name <testcase>
+   --run|-r <testcase>  compile then simulate with testcase of name <testcase>
+   --seed <integer> supply a user defined seed for current simulation
+   --uvmv|-u <UVM verbosity> set UVM verbosity of simulation to <UVM verbosity>
+   --ts|-t <timescale>   set timescale of both RTL and verification to <timescale>
+
+=head1 EXAMPLES
+
+=head2 to compile
+
+musiq.pl --com
+
+=head2 to run simulation with testcase of name test_example
+
+musiq.pl --sim test_example
+
+=head2 to compile then run simulation with testcase of name test_example
+
+musiq.pl --run test_example
+
+=head2 to run simulation with a chosen seed 1234567890
+
+musiq.pl --sim test_example --seed 1234567890
+
+=head2 to run simulation with a different UVM verbosity other than UVM_MEDIUM
+
+musiq.pl --sim test_example --uvmv UVM_LOW
+
+=head2 to change timescale from default 1ns/100ps to 1ns/1ps
+
+musiq.pl --com --ts 1ns/1ps
+
+
+=head1 OPTIONS
+
+=over 4
+
+=item B<--help|-h>
+
+Print a brief help message and exits.
+
+=item B<--version|-v>
+
+show script's version number and author and exits
+
+=item B<--com|-c>
+
+compile files listed in env_filelist.f and RTL/rtl_filelist.f and exits. 
+comilation results are generated as comp_env.log and comp_rtl.log.
+
+=item B<--sim> <testcase>
+
+only run simulation with testcase of name <testcase>, simulation results are 
+stored in an automatically created directory with name includes current time when
+starting simulation, simulation seed and testcase name.
+
+=item B<--run|-r> <testcase>
+
+a combination of option --com and --sim.
+
+=item B<--seed> <integer>
+
+user supplies a seed for current simulation.
+Used in combination with option --run and --sim. <integer> is a 32bit of integer
+number supplied by user. If this option is not used, seed is randomly generated
+for every simulation.
+
+=item B<--uvmv|-u> <UVM verbosity>
+
+user defines a UVM verbosity for current simulation, recognized value is
+UVM_LOW, UVM_MEDIUM, UVM_HIGH, other strings may work but not guranteed. Default 
+UVM verbosity is UVM_MEDIUM.
+Used in combination with option --run and --sim.
+
+=item B<--ts|-t> <timescale>
+
+user defines a timescale for both RTL code and verification environment. Default
+timescale is 1ns/100ps.
+Used in combination with option --com and --run.
+
+=back
+
+=head1 DESCRIPTION
+
+B<This program> will be used to drive Makefile which in turn to drive Questasim,
+ user can supply seed, specify which testcase to simulate, whether to only compile
+ or only simulation or compile and simulate, 
+
+=cut
