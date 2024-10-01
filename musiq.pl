@@ -9,7 +9,7 @@ use Getopt::Long;
 use Pod::Usage;
 use POSIX qw(strftime);
 
-our $version_number = 'v0.6';
+our $version_number = 'v0.6.1';
 
 # switch to show help message
 my $help = '';
@@ -108,6 +108,7 @@ sub mkdir_n_simulate{
 
     my $simulation_cmd = "make sim ".&pass_simulation_args($_[0]);
     system($simulation_cmd);
+    system("unlink work");
 }
 
 sub pass_compile_args{
