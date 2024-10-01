@@ -1,26 +1,15 @@
 #! /usr/bin/perl
 # Makefile Utility for Simulation Implementation with Questasim,
 # short for musiq, pronounced as music.
-# usage: 
-#   musiq.pl <sim|com|run> <UVM_TESTNAME> <options>
-#
-#   musiq.pl sim <UVM_TESTNAME> -- to run testcase with name of <UVM_TESTNAME> 
-#   musiq.pl com -- to compile both RTL and verification code
-#   musiq.pl run <UVM_TESTNAME> -- to compile code then run testcase
-#
-#   <options>:
-#   --seed or -s <32bit interger> -- assign a seed to this simulation, omit this
-#                               option to generate random seed
-#   --uvmv or -u <UVM_VERBOSITY> -- set UVM_VERBOSITY for this simulation
-#   --ts or -t <timescale> -- set timescale, syntax is the same as in Verilog
-#   --version or -v -- show this script's version
-#   --help or -h -- show this helpful message
+# 
+# run musiq.pl --help or musiq.pl -h to see usage
 use warnings;
 use strict;
 use Getopt::Long;
 use Pod::Usage;
+use POSIX qw(strftime);
 
-our $version_number = 'v0.5';
+our $version_number = 'v0.6';
 
 # switch to show help message
 my $help = '';
@@ -34,6 +23,8 @@ my $simulation = '';
 my $com_n_sim = '';
 # switch to supply own seed for simulation
 my $seed = '';
+# auto generated seed
+my $rand_seed = '';
 # switch to set UVM verbosity
 my $uvm_verbosity = '';
 # switch to set verilog timescale for simulation
@@ -49,6 +40,7 @@ GetOptions ("help" => \$help,
             "ts=s" => \$timescale
             )
 or die("Error in command line arguments\n");
+
 
 if($version){
     &show_version;
@@ -69,16 +61,53 @@ if($compile){
 }
 
 if($simulation){
-    my $simulation_cmd = "make sim ".&pass_simulation_args($simulation);
-    system($simulation_cmd);
+    &mkdir_n_simulate($simulation);
     exit 0;
 }
 
 if($com_n_sim){
-    my $run_cmd = "make all ".&pass_compile_args.
-                    &pass_simulation_args($com_n_sim);
-    system($run_cmd);
+    system("make work");
+    my $compile_cmd = "make build ".&pass_compile_args;
+    system($compile_cmd);
+    print("===================================\n");
+    print("Compilation results in comp_rtl.log and comp_env.log\n");
+
+    &mkdir_n_simulate($com_n_sim);
     exit 0;
+}
+
+sub mkdir_n_simulate{
+    my $directory_name = 'tc_';
+
+    #make simulation directory
+    $directory_name .= $_[0];
+    $directory_name .= '_';
+
+    my $current_time = strftime("%Y%m%d%H%M%S", localtime());
+
+    $directory_name .= $current_time;
+    $directory_name .= '_';
+    if($seed){
+        $directory_name .= $seed;
+    } else {
+        srand(time + ($$*$$*$$)%time);
+        print("time: ".time."\n");
+        print("PID: $$\n");
+        print("time + (PID^3)%time: ".(time+($$*$$*$$)%time)."\n");
+        $rand_seed = int(rand(2**32));
+        print("random number: $rand_seed\n");
+        $directory_name .= $rand_seed;
+    }
+
+    system("mkdir ".$directory_name);
+
+    # cd into made directory and run simulation there
+    chdir $directory_name;
+    system("ln -s ../Makefile");
+    system("ln -s ../work");
+
+    my $simulation_cmd = "make sim ".&pass_simulation_args($_[0]);
+    system($simulation_cmd);
 }
 
 sub pass_compile_args{
@@ -91,9 +120,11 @@ sub pass_compile_args{
 
 sub pass_simulation_args{
     my $simulation_args= '';
-    $simulation_args .= "TESTNAME=$_[0]";
+    $simulation_args .= "TESTNAME=$_[0] ";
     if ($seed){
         $simulation_args .= "SEED=$seed ";
+    } else {
+        $simulation_args .= "SEED=$rand_seed ";
     }
     if ($uvm_verbosity){
         $simulation_args .= "UVM_VERBOSITY=$uvm_verbosity ";
@@ -105,7 +136,7 @@ sub show_version{
     print("This is Perl script musiq, short for 
         Makefile Utility for Simulation Implementation with Questasim\n");
     print("Version $version_number\n");
-    print("Made at 2024 September 30th, by Penghua Chen\n");
+    print("Made at 2024 October 1st, by Penghua Chen\n");
 }
 
 __END__
