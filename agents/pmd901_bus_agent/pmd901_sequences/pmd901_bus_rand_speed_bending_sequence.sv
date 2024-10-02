@@ -48,7 +48,7 @@ task pmd901_bus_rand_speed_bending_sequence::body;
 
   assert (req.randomize() with {
       req.we == 1'b1;
-      req.enable == this.enable;
+      req.enable == pmd901_bus_rand_speed_bending_sequence.enable;
       }
   );
 

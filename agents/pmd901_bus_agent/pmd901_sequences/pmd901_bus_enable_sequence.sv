@@ -43,12 +43,15 @@ task pmd901_bus_enable_sequence::body;
     // Get request
     start_item(req);
 
+    $display("enable value in body: %b", this.enable);
     assert (req.randomize() with {
-        req.we == 1'b0;
-        req.enable == this.enable;
-        req.bending == 1'b0;
+        we == 1'b0;
+        enable == pmd901_bus_enable_sequence.enable;
+        bending == 1'b0;
         }
     );
+
+    req.print();
 
     finish_item(req);
 endtask:body
@@ -56,5 +59,6 @@ endtask:body
 task pmd901_bus_enable_sequence::set_enable(bit enable, 
     uvm_sequencer_base seqr, uvm_sequence_base parent = null);
     this.enable = enable;
+    $display("enable value: %b", this.enable);
     this.start(seqr, parent); 
 endtask: set_enable

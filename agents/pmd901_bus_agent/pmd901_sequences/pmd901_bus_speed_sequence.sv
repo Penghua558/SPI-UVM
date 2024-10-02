@@ -48,10 +48,10 @@ task pmd901_bus_speed_sequence::body;
   start_item(req);
 
   assert (req.randomize() with {
-      req.speed == this.speed;
+      req.speed == pmd901_bus_speed_sequence.speed;
       req.we == 1'b1;
-      req.enable == this.enable;
-      req.bending == this.bending;
+      req.enable == pmd901_bus_speed_sequence.enable;
+      req.bending == pmd901_bus_speed_sequence.bending;
       }
   );
 

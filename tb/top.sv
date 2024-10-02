@@ -62,7 +62,7 @@ pmd901_bus_monitor_bfm u_pmd901_BUS_mon_bfm(
     .dev_enable(u_pmd901_bus_if.dev_enable),
     .dev_bending(u_pmd901_bus_if.dev_bending)
 );
-  
+
 // DUT
 spi_top#(
 .SCLK_DIVIDER(8'd8),

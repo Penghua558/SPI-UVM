@@ -48,8 +48,8 @@ task pmd901_bus_bending_sequence::body;
 
   assert (req.randomize() with {
       req.we == 1'b0;
-      req.enable == this.enable;
-      req.bending == this.bending;
+      req.enable == pmd901_bus_bending_sequence.enable;
+      req.bending == pmd901_bus_bending_sequence.bending;
       }
   );
 
