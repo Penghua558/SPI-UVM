@@ -37,26 +37,28 @@ add wave -noupdate -expand -group DUT /top/DUT/spi_start_crossed
 add wave -noupdate -expand -group DUT /top/DUT/wdata
 add wave -noupdate -expand -group DUT /top/DUT/we
 add wave -noupdate -expand -group {spi shift} /top/DUT/shift/s_clk
+add wave -noupdate -expand -group {spi shift} /top/DUT/shift/clk
 add wave -noupdate -expand -group {spi shift} /top/DUT/shift/spi_ready
+add wave -noupdate /top/DUT/shift/spi_transmit_cnt
 add wave -noupdate /top/DUT/shift/current_state
 add wave -noupdate /top/DUT/shift/spi_start
 add wave -noupdate /top/DUT/spi_start_crossing/data_in
 add wave -noupdate /top/DUT/spi_start_crossing/data_out
 add wave -noupdate -expand -group {spi initiator} /top/DUT/transmit_initiator/cnt4spi_start
 add wave -noupdate /top/DUT/transmit_initiator/spi_ready
-add wave -noupdate -expand -group {spi_ready cdc} /top/DUT/spi_ready_crossing/busy
-add wave -noupdate -expand -group {spi_ready cdc} /top/DUT/spi_ready_crossing/data_in
-add wave -noupdate -expand -group {spi_ready cdc} /top/DUT/spi_ready_crossing/data_out
-add wave -noupdate -expand -group {spi_ready cdc} /top/DUT/spi_ready_crossing/last_req
-add wave -noupdate -expand -group {spi_ready cdc} /top/DUT/spi_ready_crossing/new_clk
-add wave -noupdate -expand -group {spi_ready cdc} /top/DUT/spi_ready_crossing/new_req
-add wave -noupdate -expand -group {spi_ready cdc} /top/DUT/spi_ready_crossing/new_req_pipe
-add wave -noupdate -expand -group {spi_ready cdc} /top/DUT/spi_ready_crossing/old_ack
-add wave -noupdate -expand -group {spi_ready cdc} /top/DUT/spi_ready_crossing/old_ack_pipe
-add wave -noupdate -expand -group {spi_ready cdc} /top/DUT/spi_ready_crossing/old_clk
-add wave -noupdate -expand -group {spi_ready cdc} /top/DUT/spi_ready_crossing/req
+add wave -noupdate -group {spi_ready cdc} /top/DUT/spi_ready_crossing/busy
+add wave -noupdate -group {spi_ready cdc} /top/DUT/spi_ready_crossing/data_in
+add wave -noupdate -group {spi_ready cdc} /top/DUT/spi_ready_crossing/data_out
+add wave -noupdate -group {spi_ready cdc} /top/DUT/spi_ready_crossing/last_req
+add wave -noupdate -group {spi_ready cdc} /top/DUT/spi_ready_crossing/new_clk
+add wave -noupdate -group {spi_ready cdc} /top/DUT/spi_ready_crossing/new_req
+add wave -noupdate -group {spi_ready cdc} /top/DUT/spi_ready_crossing/new_req_pipe
+add wave -noupdate -group {spi_ready cdc} /top/DUT/spi_ready_crossing/old_ack
+add wave -noupdate -group {spi_ready cdc} /top/DUT/spi_ready_crossing/old_ack_pipe
+add wave -noupdate -group {spi_ready cdc} /top/DUT/spi_ready_crossing/old_clk
+add wave -noupdate -group {spi_ready cdc} /top/DUT/spi_ready_crossing/req
 TreeUpdate [SetDefaultTree]
-WaveRestoreCursors {{Cursor 1} {70000 ps} 0}
+WaveRestoreCursors {{Cursor 1} {48831000 ps} 0}
 quietly wave cursor active 1
 configure wave -namecolwidth 332
 configure wave -valuecolwidth 100
@@ -72,4 +74,4 @@ configure wave -griddelta 40
 configure wave -timeline 0
 configure wave -timelineunits ps
 update
-WaveRestoreZoom {6804 ns} {12475200 ps}
+WaveRestoreZoom {47779100 ps} {50692700 ps}

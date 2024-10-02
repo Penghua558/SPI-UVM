@@ -50,26 +50,33 @@ module spi_shift#(
 
     input wire miso,
     output reg spi_ready,
-    output reg s_clk,
+    output wire s_clk,
     output reg cs_n,
     output reg mosi // MSB is transmitted at first
 );
 
 
-  parameter [2:0] IDLE = 3'b0;
-  parameter [2:0] CS_N_HOLD = 3'b010;
-  parameter [2:0] DATA_OUT = 3'b100;
+  parameter [3:0] IDLE = 4'b0;
+  parameter [3:0] CS_N_HOLD = 4'b0010;
+  parameter [3:0] DATA_OUT = 4'b0100;
+  parameter [3:0] SCLK_GATE = 4'b1000;
 
-  reg [2:0] next_state;
-  reg [2:0] current_state;
+  reg [3:0] next_state;
+  reg [3:0] current_state;
   reg [5:0] cs_n_hold_cnt;
   reg [15:0] motor_speed;
   reg [4:0] spi_transmit_cnt;
+  // 1 means gate is in effect, which would pull s_clk HIGH
+  // 0 means gate is not in effect, s_clk would be equal to clk
+  reg s_clk_gate = 1'b1;
+  reg sclk_gate_cnt = 1'b0;
+
+  assign s_clk = s_clk_gate | clk;
 
   always@(posedge clk or posedge rst) begin
       if (rst) begin
           current_state <= IDLE;
-          s_clk <= 1'b1;
+          s_clk_gate <= 1'b1;
           cs_n <= 1'b1;
           mosi <= 1'b0;
           spi_ready <= 1'b1;
@@ -81,16 +88,18 @@ module spi_shift#(
 
           case(current_state)
               IDLE: begin
-                  s_clk <= 1'b1;
+                  s_clk_gate <= 1'b1;
                   cs_n <= 1'b1;
                   mosi <= 1'b0;
                   spi_ready <= 1'b1;
+                  sclk_gate_cnt <= 1'b0;
               end
               CS_N_HOLD: begin
                   cs_n <= 1'b0;
-                  s_clk <= 1'b1;
+                  s_clk_gate <= 1'b1;
                   mosi <= 1'b0;
                   spi_ready <= 1'b0;
+                  sclk_gate_cnt <= 1'b0;
                   motor_speed <= p_in;
 
                   if (cs_n_hold_cnt == CS_N_HOLD_COUNT)
@@ -100,10 +109,11 @@ module spi_shift#(
               end
               DATA_OUT: begin
                   cs_n <= 1'b0;
-                  s_clk <= clk;
+                  s_clk_gate <= 1'b0;
                   spi_ready <= 1'b0;
+                  sclk_gate_cnt <= 1'b0;
 
-                  if (spi_transmit_cnt == 5'd16)
+                  if (spi_transmit_cnt == 5'd15)
                     spi_transmit_cnt <= 5'd0;
                   else
                     spi_transmit_cnt <= spi_transmit_cnt + 5'd1;
@@ -111,11 +121,19 @@ module spi_shift#(
                   mosi <= motor_speed[15];
                   motor_speed <= motor_speed << 1;
               end
+              SCLK_GATE: begin
+                  cs_n <= 1'b0;
+                  s_clk_gate <= 1'b1;
+                  spi_ready <= 1'b0;
+                  mosi <= 1'b0;
+                  sclk_gate_cnt <= 1'b1;
+              end
               default: begin
-                  s_clk <= 1'b1;
+                  s_clk_gate <= 1'b1;
                   cs_n <= 1'b1;
                   mosi <= 1'b0;
                   spi_ready <= 1'b1;
+                  sclk_gate_cnt <= 1'b0;
               end
           endcase
       end
@@ -136,10 +154,16 @@ module spi_shift#(
                   next_state = CS_N_HOLD;
           end
           DATA_OUT: begin
-              if (spi_transmit_cnt == 5'd16)
-                  next_state = IDLE;
+              if (spi_transmit_cnt == 5'd15)
+                  next_state = SCLK_GATE;
               else
                   next_state = DATA_OUT;
+          end
+          SCLK_GATE: begin
+            if (sclk_gate_cnt)
+                next_state = IDLE;
+            else
+                next_state = SCLK_GATE;
           end
           default: next_state = IDLE;
       endcase

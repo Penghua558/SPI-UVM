@@ -30,8 +30,6 @@ task reset();
 endtask: reset 
 
 task drive(pmd901_bus_trans req);
-    `uvm_info("DRIVER", "printing req content", UVM_MEDIUM)
-    req.print();
     @(posedge i_clk);
     wdata <= req.speed;
     we <= req.we;
