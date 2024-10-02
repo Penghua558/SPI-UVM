@@ -55,11 +55,11 @@ module spi_shift#(
     output reg mosi // MSB is transmitted at first
 );
 
-                              
+
   parameter [2:0] IDLE = 3'b0;
   parameter [2:0] CS_N_HOLD = 3'b010;
   parameter [2:0] DATA_OUT = 3'b100;
-  
+
   reg [2:0] next_state;
   reg [2:0] current_state;
   reg [5:0] cs_n_hold_cnt;

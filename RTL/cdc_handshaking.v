@@ -7,7 +7,7 @@ module cdc_handshaking(
     output reg data_out
 );
 
-reg req;
+reg req = 1'b0;
 reg last_req;
 reg new_req;
 reg new_req_pipe;
@@ -23,9 +23,9 @@ always@(posedge old_clk) begin
     {old_ack, old_ack_pipe} <= {old_ack_pipe, new_req};
 end
 
-// can not raise another request from old clock domain if the input data is
-// still asserted or acknowledgement in old clock domain still presents
-assign busy = (data_in) || (old_ack);
+// can not raise another request from old clock domain if there is still
+// an ongoing request, or acknowledgement in old clock domain still presents
+assign busy = (req) || (old_ack);
 
 always@(posedge old_clk) begin
     if ((!busy) && data_in) begin
