@@ -29,7 +29,7 @@ task run();
     item = pmd901_bus_trans::type_id::create("item");
 
     forever begin
-        @(posedge i_clk);
+        @(i_rstn, wdata, we, dev_enable, dev_bending);
         item.speed = wdata;
         item.we = we;
         item.enable = dev_enable;

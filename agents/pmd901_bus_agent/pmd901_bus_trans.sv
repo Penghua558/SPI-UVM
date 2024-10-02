@@ -11,7 +11,7 @@ extern function new(string name = "pmd901_bus_trans");
 extern function void do_copy(uvm_object rhs);
 extern function bit do_compare(uvm_object rhs, uvm_comparer comparer);
 extern function void do_print(uvm_printer printer);
-// extern function void do_record(uvm_recorder recorder);
+extern function void do_record(uvm_recorder recorder);
 
 extern constraint speed_cons;
 endclass: pmd901_bus_trans
@@ -67,3 +67,8 @@ function bit pmd901_bus_trans::do_compare(uvm_object rhs,
          enable == rhs_.enable &&
          bending == rhs_.bending;
 endfunction:do_compare
+
+function void pmd901_bus_trans::do_record(uvm_recorder recorder);
+    super.do_record(recorder);
+    `uvm_record_string("pmd901_bus_trans", this.sprint())
+endfunction

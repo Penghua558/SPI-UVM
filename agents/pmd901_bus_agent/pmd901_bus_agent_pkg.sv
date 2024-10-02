@@ -9,6 +9,8 @@ import uvm_pkg::*;
 `include "pmd901_bus_driver.sv"
 `include "pmd901_bus_sequencer.sv"
 
+`include "pmd901_bus_recorder.sv"
+
 `include "pmd901_bus_agent.sv"
 
 // API sequences
