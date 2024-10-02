@@ -46,7 +46,7 @@ task pmd901_bus_enable_sequence::body;
     $display("enable value in body: %b", this.enable);
     assert (req.randomize() with {
         we == 1'b0;
-        enable == pmd901_bus_enable_sequence.enable;
+        enable == local::enable;
         bending == 1'b0;
         }
     );
