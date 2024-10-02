@@ -48,10 +48,7 @@ endproperty
 
 assert property (clocknumber)
 else
-    `uvm_fatal("PMD901 MONITOR BFM", "Clock cycle number is not 16 during data transmission!")
-
-// assert property (readyfan)
-// else
-//     `uvm_fatal("PMD901 MONITOR BFM", "Ready and fan should not be asserted at the same time")
+    `uvm_fatal("PMD901 MONITOR BFM", "Clock cycle number is not\
+        16 during data transmission!")
 
 endinterface: pmd901_if

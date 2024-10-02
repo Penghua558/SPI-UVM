@@ -15,7 +15,7 @@ extern function new(string name = "pmd901_trans");
 extern function void do_copy(uvm_object rhs);
 extern function bit do_compare(uvm_object rhs, uvm_comparer comparer);
 extern function void do_print(uvm_printer printer);
-// extern function void do_record(uvm_recorder recorder);
+extern function void do_record(uvm_recorder recorder);
 
 extern constraint overheat_cons;
 extern constraint close2overheat_cons;
@@ -97,3 +97,8 @@ function bit pmd901_trans::do_compare(uvm_object rhs, uvm_comparer comparer);
          work_status == rhs_.work_status &&
          speed == rhs_.speed;
 endfunction:do_compare
+
+function void pmd901_trans::do_record(uvm_recorder recorder);
+    super.do_record(recorder);
+    `uvm_record_string("pmd901_trans", this.sprint())
+endfunction

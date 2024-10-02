@@ -45,5 +45,5 @@ task pmd901_monitor::run_phase(uvm_phase phase);
 endtask
 
 function void pmd901_monitor::notify_transaction(pmd901_trans item);
-  ap.write(item);
+    ap.write(item);
 endfunction: notify_transaction

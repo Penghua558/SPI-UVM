@@ -10,5 +10,7 @@ import uvm_pkg::*;
 `include "pmd901_sequencer.sv"
 `include "pmd901_sequence.sv"
 
+`include "pmd901_recorder.sv"
+
 `include "pmd901_agent.sv"
 endpackage: pmd901_agent_pkg 

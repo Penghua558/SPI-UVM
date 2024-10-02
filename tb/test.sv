@@ -111,7 +111,7 @@ task test::main_phase(uvm_phase phase);
             pmd901_seq.read_n_drive(m_env.m_pmd901_agent.m_sequencer);
             repeat(40) begin
                 i++;
-                `uvm_info("TEST", $sformatf("sequence number: %0d/60", i), 
+                `uvm_info("TEST", $sformatf("sequence number: %0d/40", i), 
                     UVM_MEDIUM)
                 pmd901_speed_seq.rand_speed_bending(test_enable, 
                     m_env.m_pmd901_bus_agent.m_sequencer);
