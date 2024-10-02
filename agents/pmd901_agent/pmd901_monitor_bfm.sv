@@ -15,6 +15,7 @@ clocking mon_cb@(posedge clk);
 endclocking: mon_cb
 
 import pmd901_agent_pkg::*;
+import pmd901_agent_dec::*;
 
 //------------------------------------------
 // Data Members
@@ -43,6 +44,15 @@ task sample_on_bending_change(pmd901_trans item);
     @(bend iff csn);
     item.speed = 16'd0;
 endtask
+
+function automatic work_status_e get_work_status();
+    case({park, bend})
+        2'b0?: return pmd901_agent_dec::POWER_DOWN;
+        2'b10: return pmd901_agent_dec::NORMAL_WORKING;
+        2'b11: return pmd901_agent_dec::BENDING_WORKING;
+        default: return pmd901_agent_dec::POWER_DOWN;
+    endcase
+endfunction
 
 task sample_on_spi_transmit(pmd901_trans item);
     // if device is not powered up, then we wait
@@ -84,7 +94,12 @@ task run();
             end
         join_any;
         disable fork;
-        
+
+        item.work_status = get_work_status();
+        item.overheat = ready;
+        item.close2overheat = fan;
+        item.spi_violated = fault;
+
         $cast(cloned_item, item.clone());
         proxy.notify_transaction(cloned_item);
     end
