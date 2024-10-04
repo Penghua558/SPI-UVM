@@ -17,6 +17,10 @@ my $help = '';
 my $version = '';
 # switch for compilation only
 my $compile = '';
+# switch for RTL code compilation only
+my $rtl_compile = '';
+# switch for verification environment compilation only
+my $env_compile = '';
 # switch for simulation only, and testcase for simulation
 my $simulation = '';
 # switch to compile then simulate, and testcase for simulation
@@ -33,6 +37,8 @@ my $timescale = '';
 GetOptions ("help" => \$help,
             "version" => \$version,
             "com" => \$compile,
+            "rtlcom" => \$rtl_compile,
+            "envom" => $env_compile,
             "sim=s" => \$simulation,
             "run=s" => \$com_n_sim,
             "seed=i" => \$seed,
@@ -57,6 +63,24 @@ if($compile){
     system($compile_cmd);
     print("===================================\n");
     print("Compilation results in comp_rtl.log and comp_env.log\n");
+    exit 0;
+}
+
+if($rtl_compile){
+    system("make rtl_build");
+    my $compile_cmd = "make rtl_build".&pass_compile_args;
+    system($compile_cmd);
+    print("===================================\n");
+    print("Compilation results in comp_rtl.log\n");
+    exit 0;
+}
+
+if($env_compile){
+    system("make env_build");
+    my $compile_cmd = "make env_build".&pass_compile_args;
+    system($compile_cmd);
+    print("===================================\n");
+    print("Compilation results in comp_env.log\n");
     exit 0;
 }
 
@@ -153,9 +177,11 @@ musiq.pl [--com|--sim|--run] [options]
    --help|-h            brief help message
    --version|-v         show script's version number and author
    --com|-c         compile this verification environment and RTL code
-   --sim| <testcase>  run simulation with testcase of name <testcase>
-   --run|-r <testcase>  compile then simulate with testcase of name <testcase>
-   --seed <integer> supply a user defined seed for current simulation
+   --rtlcom             only compile RTL code
+   --envcom|-e          only compile verification environment code
+   --sim <testcase>     run simulation with testcase of name <testcase>
+   --run <testcase>     compile then simulate with testcase of name <testcase>
+   --seed <integer>     supply a user defined seed for current simulation
    --uvmv|-u <UVM verbosity> set UVM verbosity of simulation to <UVM verbosity>
    --ts|-t <timescale>   set timescale of both RTL and verification to <timescale>
 
@@ -200,8 +226,18 @@ show script's version number and author and exits
 
 =item B<--com|-c>
 
-compile files listed in env_filelist.f and RTL/rtl_filelist.f and exits. 
+compile files listed in env_filelist.f and RTL/rtl_filelist.f and exits.
 comilation results are generated as comp_env.log and comp_rtl.log.
+
+=item B<--rtlcom>
+
+only compile files listed in RTL/rtl_filelist.f and exits.
+Comilation results are generated as comp_rtl.log.
+
+=item B<--envcom|-e>
+
+only compile files listed in env_filelist.f and exits.
+Comilation results are generated as comp_env.log.
 
 =item B<--sim> <testcase>
 
@@ -209,7 +245,7 @@ only run simulation with testcase of name <testcase>, simulation results are
 stored in an automatically created directory with name includes current time when
 starting simulation, simulation seed and testcase name.
 
-=item B<--run|-r> <testcase>
+=item B<--run> <testcase>
 
 a combination of option --com and --sim.
 
