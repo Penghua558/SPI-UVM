@@ -16,10 +16,10 @@ module spi_shift#(
 );
 
 
-  parameter [3:0] IDLE = 4'b0;
-  parameter [3:0] CS_N_HOLD = 4'b0010;
-  parameter [3:0] DATA_OUT = 4'b0100;
-  parameter [3:0] SCLK_GATE = 4'b1000;
+  localparam [3:0] IDLE = 4'b0;
+  localparam [3:0] CS_N_HOLD = 4'b0010;
+  localparam [3:0] DATA_OUT = 4'b0100;
+  localparam [3:0] SCLK_GATE = 4'b1000;
 
   reg [3:0] next_state;
   reg [3:0] current_state;
