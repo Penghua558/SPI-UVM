@@ -35,13 +35,11 @@
 //   CONDITIONS OF ANY KIND, either express or implied.  See
 //   the License for the specific language governing
 //   permissions and limitations under the License.
-//------------------------------------------------------------------------------
-interface apb_if(input PCLK,
-                 input PRESETn);
+interface apb_if(input PCLK, input PRESETn);
 
-  logic[31:0] PADDR;
-  logic[31:0] PRDATA;
-  logic[31:0] PWDATA;
+  logic[15:0] PADDR;
+  logic[15:0] PRDATA;
+  logic[15:0] PWDATA;
   logic[15:0] PSEL; // Only connect the ones that are needed
   logic PENABLE;
   logic PWRITE;
