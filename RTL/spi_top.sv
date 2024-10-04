@@ -66,7 +66,7 @@ parameter [5:0] CS_N_HOLD_COUNT = 6'd3
 
 apb_completer#(
 .ADDR_WIDTH(16),
-.DATA_WIDTH(16),
+.DATA_WIDTH(16)
 ) u_apb_completer(
     // APB interface
     .PCLK(PCLK),
