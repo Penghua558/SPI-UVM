@@ -25,7 +25,7 @@ pmd901_monitor proxy;
 //------------------------------------------
 // Methods
 //------------------------------------------
-task wait_inputs_isknown();
+task automatic wait_inputs_isknown();
   while(csn === 1'hx || park === 1'hx || bend === 1'hx) begin
     #1;
   end

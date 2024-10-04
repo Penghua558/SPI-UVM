@@ -24,23 +24,23 @@ interface apb_monitor_bfm (
   input PCLK,
   input PRESETn,
 
-  input logic [31:0] PADDR,
-  input logic [31:0] PRDATA,
-  input logic [31:0] PWDATA,
+  input logic [15:0] PADDR,
+  input logic [15:0] PRDATA,
+  input logic [15:0] PWDATA,
   input logic [15:0] PSEL,    // Only connect the ones that are needed
-  input logic        PENABLE,
-  input logic        PWRITE,
-  input logic        PREADY
+  input logic PENABLE,
+  input logic PWRITE,
+  input logic PREADY
 );
 
-  import apb_agent_pkg::*;
+import apb_agent_pkg::*;
 
 //------------------------------------------
 // Data Members
 //------------------------------------------
 int apb_index = 0; // Which PSEL line is this monitor connected to
 apb_monitor proxy;
-  
+
 //------------------------------------------
 // Component Members
 //------------------------------------------
@@ -48,14 +48,20 @@ apb_monitor proxy;
 //------------------------------------------
 // Methods
 //------------------------------------------
+function void set_apb_index(int index);
+    apb_index = index;
+endfunction : set_apb_index
+
+task automatic wait_for_reset();
+    @(posedge PRESETn);
+endtask
 
 // BFM Methods:
-  
 task run();
-  apb_seq_item item;
-  apb_seq_item cloned_item;
-  
-  item = apb_seq_item::type_id::create("item");
+  apb_trans item;
+  apb_trans cloned_item;
+
+  item = apb_trans::type_id::create("item");
 
   forever begin
     // Detect the protocol event on the TBAI virtual interface
@@ -64,15 +70,11 @@ task run();
       // Assign the relevant values to the analysis item fields
       begin
         item.addr = PADDR;
-        item.we = PWRITE;
+        item.wr = PWRITE;
         if(PWRITE)
-          begin
-            item.data = PWDATA;
-          end
+            item.wdata = PWDATA;
         else
-          begin
-            item.data = PRDATA;
-          end
+            item.rdata = PRDATA;
         // Clone and publish the cloned item to the subscribers
         $cast(cloned_item, item.clone());
         proxy.notify_transaction(cloned_item);

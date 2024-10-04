@@ -48,7 +48,7 @@ endproperty
 
 assert property (clocknumber)
 else
-    `uvm_fatal("PMD901 MONITOR BFM", "Clock cycle number is not\
+    `uvm_fatal("PMD901 IF", "Clock cycle number is not\
         16 during data transmission!")
 
 endinterface: pmd901_if

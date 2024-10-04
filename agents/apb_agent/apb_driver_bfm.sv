@@ -43,7 +43,7 @@ int apb_index = 0;
 // Methods
 //------------------------------------------
 
-task reset();
+task automatic reset();
     while (!PRESETn) begin
         PADDR <= 16'd0;
         PWDATA <= 16'd0;
@@ -65,14 +65,17 @@ task drive (apb_seq_item req);
         @(posedge PCLK);
     PSEL[apb_index] <= 1'b1;
     PADDR <= req.addr;
-    PWDATA <= req.data;
-    PWRITE <= req.we;
+    PWDATA <= req.wdata;
+    PWRITE <= req.wr;
     @(posedge PCLK);
-    PENABLE <= 1;
+    PENABLE <= 1'b1;
     while (!PREADY)
         @(posedge PCLK);
     if(PWRITE == 0)
-        req.data = PRDATA;
+        req.rdata = PRDATA;
+    @(posedge PCLK);
+    PSEL[apb_index] <= 1'b0;
+    PENABLE <= 1'b0;
 endtask: drive
 
 endinterface: apb_driver_bfm

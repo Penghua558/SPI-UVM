@@ -37,21 +37,58 @@
 //   permissions and limitations under the License.
 interface apb_if(input PCLK, input PRESETn);
 
-  logic[15:0] PADDR;
-  logic[15:0] PRDATA;
-  logic[15:0] PWDATA;
-  logic[15:0] PSEL; // Only connect the ones that are needed
-  logic PENABLE;
-  logic PWRITE;
-  logic PREADY;
+logic[15:0] PADDR;
+logic[15:0] PRDATA;
+logic[15:0] PWDATA;
+logic[15:0] PSEL; // Only connect the ones that are needed
+logic PENABLE;
+logic PWRITE;
+logic PREADY;
 
-  property psel_valid;
+`include "uvm_macros.svh"
+import uvm_pkg::*;
+
+property psel_valid;
     @(posedge PCLK) disable iff (PRESETn == 1'b0)
     !$isunknown(PSEL);
-  endproperty: psel_valid
+endproperty: psel_valid
 
-  //CHK_PSEL: assert property(psel_valid);
+// PADDR should remain stable once PSEL is asserted
+property paddr_stable;
+    disable iff (!PRESETn)
+    @(posedge PCLK) PSEL |-> ($stable(PADDR) until_with !PSEL);
+endproperty
 
-  //COVER_PSEL: cover property(psel_valid);
+// PWRITE should remain stable once PSEL is asserted
+property pwrite_stable;
+    disable iff (!PRESETn)
+    @(posedge PCLK) PSEL |-> ($stable(PWRITE) until_with !PSEL);
+endproperty
+
+// PWDATA should remain stable once PSEL is asserted
+property pwdata_stable;
+    disable iff (!PRESETn)
+    @(posedge PCLK) PSEL |-> ($stable(PWDATA) until_with !PSEL);
+endproperty
+
+assert property (psel_valid)
+else
+    `uvm_fatal("APB IF", "PSEL should be valid when PRESETn is deasserted")
+
+assert property (paddr_stable)
+else
+    `uvm_fatal("APB IF", "PADDR is not stable during transmission")
+
+assert property (pwrite_stable)
+else
+    `uvm_fatal("APB IF", "PWRITE is not stable during transmission")
+
+assert property (pwdata_stable)
+else
+    `uvm_fatal("APB IF", "PWDATA is not stable during transmission")
+
+//CHK_PSEL: assert property(psel_valid);
+
+//COVER_PSEL: cover property(psel_valid);
 
 endinterface: apb_if
