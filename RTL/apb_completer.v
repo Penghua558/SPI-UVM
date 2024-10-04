@@ -18,7 +18,7 @@ module apb_completer#(
     output reg [ADDR_WIDTH-1:0] o_addr,
     output reg [DATA_WIDTH-1:0] o_wdata,
     // write/read enable, 0 means read, 1 means write
-    output reg wr,
+    output reg i_wr,
     input wire [DATA_WIDTH-1:0] i_rdata
 );
 
@@ -35,7 +35,7 @@ always@(posedge PCLK or negedge PRESETn) begin
         PREADY <= 1'b0;
         PRDATA <= {DATA_WIDTH{1'b0}};
 
-        wr <= 1'b0;
+        i_wr <= 1'b0;
         o_addr <= {ADDR_WIDTH{1'b0}};
         o_wdata <= {DATA_WIDTH{1'b0}};
     end else begin
@@ -46,7 +46,7 @@ always@(posedge PCLK or negedge PRESETn) begin
                 PREADY <= 1'b0;
                 PRDATA <= {DATA_WIDTH{1'b0}};
 
-                wr <= 1'b0;
+                i_wr <= 1'b0;
                 o_addr <= {ADDR_WIDTH{1'b0}};
                 o_wdata <= {DATA_WIDTH{1'b0}};
             end
@@ -54,14 +54,14 @@ always@(posedge PCLK or negedge PRESETn) begin
                 PREADY <= 1'b0;
                 PRDATA <= {DATA_WIDTH{1'b0}};
 
-                wr <= 1'b0;
+                i_wr <= 1'b0;
                 o_addr <= PADDR;
                 o_wdata <= {DATA_WIDTH{1'b0}};
             end
             ACCESS: begin
                 PREADY <= 1'b1;
 
-                wr <= PWRITE;
+                i_wr <= PWRITE;
                 o_addr <= PADDR;
 
 
@@ -77,7 +77,7 @@ always@(posedge PCLK or negedge PRESETn) begin
                 PREADY <= 1'b0;
                 PRDATA <= {DATA_WIDTH{1'b0}};
 
-                wr <= 1'b0;
+                i_wr <= 1'b0;
                 o_addr <= {ADDR_WIDTH{1'b0}};
                 o_wdata <= {DATA_WIDTH{1'b0}};
             end

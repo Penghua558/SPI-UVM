@@ -2,10 +2,10 @@ module spi_reg(
     input wire clk,
     input wire rstn,
 
-    input wire [15:0] addr,
-    input wire [15:0] wdata,
-    input wire wr,
-    output reg [15:0] rdata,
+    input wire [15:0] i_addr,
+    input wire [15:0] i_wdata,
+    input wire i_wr,
+    output reg [15:0] o_rdata,
 
     input wire i_fan,
     input wire i_fault,
@@ -38,26 +38,26 @@ assign o_bending = bending;
 
 always@(posedge clk or negedge rstn) begin
     if (!rstn) begin
-        rdata <= 16'd0;
+        o_rdata <= 16'd0;
     end else begin
-        if (wr) begin
+        if (i_wr) begin
         // write operation
-            case(addr)
-                16'd0: motor_speed <= wdata;
-                16'd1: park        <= wdata[0];
-                16'd2: bending     <= wdata[0];
+            case(i_addr)
+                16'd0: motor_speed <= i_wdata;
+                16'd1: park        <= i_wdata[0];
+                16'd2: bending     <= i_wdata[0];
                 default:;
             endcase
         end else begin
         // read operation
-            case(addr)
-                16'd0: rdata <= motor_speed;
-                16'd1: rdata <= {15'd0, park};
-                16'd2: rdata <= {15'd0, bending};
-                16'd3: rdata <= {15'd0, fan};
-                16'd4: rdata <= {15'd0, fault};
-                16'd5: rdata <= {15'd0, ready};
-                default: rdata <= 16'd0;
+            case(i_addr)
+                16'd0: o_rdata <= motor_speed;
+                16'd1: o_rdata <= {15'd0, park};
+                16'd2: o_rdata <= {15'd0, bending};
+                16'd3: o_rdata <= {15'd0, fan};
+                16'd4: o_rdata <= {15'd0, fault};
+                16'd5: o_rdata <= {15'd0, ready};
+                default: o_rdata <= 16'd0;
             endcase
         end
     end
