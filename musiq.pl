@@ -9,7 +9,7 @@ use Getopt::Long;
 use Pod::Usage;
 use POSIX qw(strftime);
 
-our $version_number = 'v0.6.1';
+our $version_number = 'v0.6.2';
 
 # switch to show help message
 my $help = '';

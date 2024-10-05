@@ -33,12 +33,15 @@ interface apb_driver_bfm (
   input  logic PREADY
 );
 
+`include "uvm_macros.svh"
+import uvm_pkg::*;
 import apb_agent_pkg::*;
 
 //------------------------------------------
 // Data Members
 //------------------------------------------
 int apb_index = 0;
+apb_agent_config m_cfg;
 //------------------------------------------
 // Methods
 //------------------------------------------
@@ -58,24 +61,37 @@ function void set_apb_index(int index);
     apb_index = index;
 endfunction: set_apb_index
 
+function bit is_addr_legal(logic [15:0] address);
+    if (address >= m_cfg.start_address[apb_index] &&
+        address <= m_cfg.start_address[apb_index] + m_cfg.range[i])
+        return 1;
+    else
+        return 0;
+endfunction
+
 task drive (apb_seq_item req);
     int apb_index;
 
     repeat(req.delay)
         @(posedge PCLK);
-    PSEL[apb_index] <= 1'b1;
-    PADDR <= req.addr;
-    PWDATA <= req.wdata;
-    PWRITE <= req.wr;
-    @(posedge PCLK);
-    PENABLE <= 1'b1;
-    while (!PREADY)
+    if (is_addr_legal(req.addr)) begin
+        PSEL[apb_index] <= 1'b1;
+        PADDR <= req.addr;
+        PWDATA <= req.wdata;
+        PWRITE <= req.wr;
         @(posedge PCLK);
-    if(PWRITE == 0)
-        req.rdata = PRDATA;
-    @(posedge PCLK);
-    PSEL[apb_index] <= 1'b0;
-    PENABLE <= 1'b0;
+        PENABLE <= 1'b1;
+        while (!PREADY)
+            @(posedge PCLK);
+        if(PWRITE == 0)
+            req.rdata = PRDATA;
+        @(posedge PCLK);
+        PSEL[apb_index] <= 1'b0;
+        PENABLE <= 1'b0;
+    end else begin
+        `uvm_error("APB DRIVER", 
+            $sformatf("Access to addr %0h out of APB address range", req.addr))
+    end
 endtask: drive
 
 endinterface: apb_driver_bfm

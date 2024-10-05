@@ -31,6 +31,7 @@ function void apb_driver::build_phase(uvm_phase phase);
   super.build_phase(phase);
   m_cfg = apb_agent_config::get_config(this);
   m_bfm = m_cfg.drv_bfm;
+  m_bfm.m_cfg = m_cfg;
   m_bfm.set_apb_index(m_cfg.apb_index);
 endfunction: build_phase
 

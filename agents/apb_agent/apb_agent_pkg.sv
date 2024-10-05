@@ -28,6 +28,7 @@ import uvm_pkg::*;
 `include "apb_sequencer.sv"
 `include "apb_recorder.sv"
 
+`include "reg2apb_adapter.sv"
 `include "apb_agent.sv"
 
 `include "apb_sequences/apb_read_sequence.sv"
