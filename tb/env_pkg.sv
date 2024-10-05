@@ -27,6 +27,7 @@ import uvm_pkg::*;
 
 import pmd901_agent_pkg::*;
 import apb_agent_pkg::*;
+import spi_reg_pkg::*;
 
 // Includes:
 `include "env_config.svh"
