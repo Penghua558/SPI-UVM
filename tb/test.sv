@@ -56,14 +56,14 @@ function void test::build_phase(uvm_phase phase);
     `uvm_error("build_phase", "uvm_config_db #(virtual \
         pmd901_monitor_bfm)::get() failed");
 
-  if (!uvm_config_db #(virtual pmd901_bus_driver_bfm)::get(this, "", 
-      "PMD901_BUS_drv_bfm", m_env_cfg.m_pmd901_bus_agent_cfg.drv_bfm))
+  if (!uvm_config_db #(virtual apb_driver_bfm)::get(this, "", 
+      "u_apb_driver_bfm", m_env_cfg.m_apb_agent_cfg.drv_bfm))
     `uvm_error("build_phase", "uvm_config_db #(virtual \
-        pmd901_bus_driver_bfm)::get(...) failed");
-  if (!uvm_config_db #(virtual pmd901_bus_monitor_bfm)::get(this, "", 
-      "PMD901_BUS_mon_bfm", m_env_cfg.m_pmd901_bus_agent_cfg.mon_bfm))
+        apb_driver_bfm)::get(...) failed");
+  if (!uvm_config_db #(virtual apb_monitor_bfm)::get(this, "", 
+      "u_apb_monitor_bfm", m_env_cfg.m_apb_agent_cfg.mon_bfm))
     `uvm_error("build_phase", "uvm_config_db #(virtual \
-        pmd901_bus_monitor_bfm)::get(...) failed");
+        apb_monitor_bfm)::get(...) failed");
 
   m_env = env::type_id::create("m_env", this);
 

@@ -12,7 +12,7 @@ logic PRESETn;
 // Instantiate the pin interfaces:
 //
 pmd901_if u_pmd901_if();
-pmd901_bus_if u_pmd901_bus_if(PCLK, PRESETn);
+apb_if u_apb_if(PCLK, PRESETn);
 
 //
 // Instantiate the BFM interfaces:
@@ -45,22 +45,28 @@ pmd901_monitor_bfm u_pmd901_mon_bfm(
     .ready(u_pmd901_if.ready)
 );
 
-pmd901_bus_driver_bfm u_pmd901_BUS_drv_bfm(
-    .i_clk(u_pmd901_bus_if.i_clk),
-    .i_rstn(u_pmd901_bus_if.i_rstn),
-    .wdata(u_pmd901_bus_if.wdata),
-    .we(u_pmd901_bus_if.we),
-    .dev_enable(u_pmd901_bus_if.dev_enable),
-    .dev_bending(u_pmd901_bus_if.dev_bending)
+apb_driver_bfm u_apb_driver_bfm(
+    .PCLK(u_apb_if.PCLK),
+    .PRESETn(u_apb_if.PRESETn),
+    .PADDR(u_apb_if.PADDR),
+    .PRDATA(u_apb_if.PRDATA),
+    .PWDATA(u_apb_if.PWDATA),
+    .PSEL(u_apb_if.PSEL),
+    .PENABLE(u_apb_if.PENABLE),
+    .PWRITE(u_apb_if.PWRITE),
+    .PREADY(u_apb_if.PREADY)
 );
 
-pmd901_bus_monitor_bfm u_pmd901_BUS_mon_bfm(
-    .i_clk(u_pmd901_bus_if.i_clk),
-    .i_rstn(u_pmd901_bus_if.i_rstn),
-    .wdata(u_pmd901_bus_if.wdata),
-    .we(u_pmd901_bus_if.we),
-    .dev_enable(u_pmd901_bus_if.dev_enable),
-    .dev_bending(u_pmd901_bus_if.dev_bending)
+apb_monitor_bfm u_apb_monitor_bfm(
+    .PCLK(u_apb_if.PCLK),
+    .PRESETn(u_apb_if.PRESETn),
+    .PADDR(u_apb_if.PADDR),
+    .PRDATA(u_apb_if.PRDATA),
+    .PWDATA(u_apb_if.PWDATA),
+    .PSEL(u_apb_if.PSEL),
+    .PENABLE(u_apb_if.PENABLE),
+    .PWRITE(u_apb_if.PWRITE),
+    .PREADY(u_apb_if.PREADY)
 );
 
 // DUT
@@ -69,12 +75,16 @@ spi_top#(
 .SPI_TRANSMIT_DELAY(12'd2001),
 .CS_N_HOLD_COUNT(6'd3)
 ) DUT(
-    .clk(PCLK),
-    .rstn(PRESETn),
-    .wdata(u_pmd901_bus_if.wdata),
-    .we(u_pmd901_bus_if.we),
-    .dev_enable(u_pmd901_bus_if.dev_enable),
-    .dev_bending(u_pmd901_bus_if.dev_bending),
+    .PCLK(PCLK),
+    .PRESETn(PRESETn),
+    .PSEL(u_apb_if.PSEL),
+    .PENABLE(u_apb_if.PENABLE),
+    .PWRITE(u_apb_if.PWRITE),
+    .PADDR(u_apb_if.PADDR),
+    .PWDATA(u_apb_if.PWDATA),
+    .PREADY(u_apb_if.PREADY),
+    .PRDATA(u_apb_if.PRDATA),
+
     .fault(u_pmd901_if.fault),
     .fan(u_pmd901_if.fan),
     .ready(u_pmd901_if.ready),
@@ -95,10 +105,10 @@ initial begin
   uvm_config_db#(virtual pmd901_driver_bfm)::set(null, "uvm_test_top",
       "PMD901_drv_bfm", u_pmd901_drv_bfm);
 
-  uvm_config_db #(virtual pmd901_bus_monitor_bfm)::set(null, "uvm_test_top",
-      "PMD901_BUS_mon_bfm", u_pmd901_BUS_mon_bfm);
-  uvm_config_db #(virtual pmd901_bus_driver_bfm)::set(null, "uvm_test_top",
-      "PMD901_BUS_drv_bfm", u_pmd901_BUS_drv_bfm);
+  uvm_config_db #(virtual apb_monitor_bfm)::set(null, "uvm_test_top",
+      "u_apb_monitor_bfm", u_apb_monitor_bfm);
+  uvm_config_db #(virtual apb_driver_bfm)::set(null, "uvm_test_top",
+      "u_apb_driver_bfm", u_apb_driver_bfm);
   run_test();
 end
 
