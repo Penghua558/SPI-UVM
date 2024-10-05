@@ -30,7 +30,7 @@ class env extends uvm_env;
 // Data Members
 //------------------------------------------
 pmd901_agent m_pmd901_agent;
-pmd901_bus_agent m_pmd901_bus_agent;
+apb_agent m_apb_agent;
 env_config m_cfg;
 
 // Standard UVM Methods:
@@ -47,8 +47,8 @@ endfunction
 function void env::build_phase(uvm_phase phase);
   m_cfg = env_config::get_config(this);
   m_pmd901_agent = pmd901_agent::type_id::create("m_pmd901_agent", this);
-  m_pmd901_bus_agent = pmd901_bus_agent::type_id::create(
-      "m_pmd901_bus_agent", this);
+  m_apb_agent = apb_agent::type_id::create(
+      "m_apb_agent", this);
 endfunction:build_phase
 
 function void env::connect_phase(uvm_phase phase);

@@ -26,7 +26,7 @@ bit test_bending;
 // Methods
 //------------------------------------------
 extern function void configure_pmd901_agent(pmd901_agent_config cfg);
-extern function void configure_pmd901_bus_agent(pmd901_bus_agent_config cfg);
+extern function void configure_apb_agent(apb_agent_config cfg);
 // Standard UVM Methods:
 extern function new(string name = "test", uvm_component parent = null);
 extern function void build_phase(uvm_phase phase);
@@ -45,7 +45,7 @@ function void test::build_phase(uvm_phase phase);
   m_env_cfg = env_config::type_id::create("m_env_cfg");
 
   configure_pmd901_agent(m_env_cfg.m_pmd901_agent_cfg);
-  configure_pmd901_bus_agent(m_env_cfg.m_pmd901_bus_agent_cfg);
+  configure_apb_agent(m_env_cfg.m_apb_agent_cfg);
 
   if (!uvm_config_db #(virtual pmd901_driver_bfm)::get(this, "", 
       "PMD901_drv_bfm", m_env_cfg.m_pmd901_agent_cfg.drv_bfm))
@@ -70,8 +70,8 @@ function void test::build_phase(uvm_phase phase);
   uvm_config_db #(uvm_object)::set(this, "m_env*", "env_config", m_env_cfg);
   uvm_config_db #(pmd901_agent_config)::set(this, "m_env*", 
       "pmd901_agent_config", m_env_cfg.m_pmd901_agent_cfg);
-  uvm_config_db #(pmd901_bus_agent_config)::set(this, "m_env*", 
-      "pmd901_bus_agent_config", m_env_cfg.m_pmd901_bus_agent_cfg);
+  uvm_config_db #(apb_agent_config)::set(this, "m_env*", 
+      "apb_agent_config", m_env_cfg.m_apb_agent_cfg);
 endfunction: build_phase
 
 
@@ -83,9 +83,12 @@ function void test::configure_pmd901_agent(pmd901_agent_config cfg);
   cfg.disable_overheat = 1'b0;
 endfunction: configure_pmd901_agent
 
-function void test::configure_pmd901_bus_agent(pmd901_bus_agent_config cfg);
+function void test::configure_apb_agent(apb_agent_config cfg);
   cfg.active = UVM_ACTIVE;
-endfunction: configure_pmd901_bus_agent
+  cfg.apb_index = 1;
+  cfg.start_address[0] = 16'd0;
+  cfg.range[0] = 16'd5;
+endfunction: configure_apb_agent
 
 task test::main_phase(uvm_phase phase);
     pmd901_sequence pmd901_seq = pmd901_sequence::type_id::create("pmd901_seq");

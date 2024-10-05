@@ -37,7 +37,7 @@ localparam string s_my_config_type_error_id = "config type error";
 // Data Members
 //------------------------------------------
 pmd901_agent_config m_pmd901_agent_cfg;
-pmd901_bus_agent_config m_pmd901_bus_agent_cfg;
+apb_agent_config m_apb_agent_cfg;
 
 //------------------------------------------
 // Methods
@@ -51,8 +51,8 @@ function env_config::new(string name = "env_config");
   super.new(name);
   m_pmd901_agent_cfg = pmd901_agent_config::type_id::create(
       "m_pmd901_agent_cfg");
-  m_pmd901_bus_agent_cfg = pmd901_bus_agent_config::type_id::create(
-      "m_pmd901_bus_agent_cfg");
+  m_apb_agent_cfg = apb_agent_config::type_id::create(
+      "m_apb_agent_cfg");
 endfunction
 
 //
