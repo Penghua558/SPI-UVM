@@ -21,4 +21,8 @@ package apb_agent_pkg;
 import uvm_pkg::*;
 `include "uvm_macros.svh"
 `include "apb_trans.sv"
+`include "apb_agent_config.sv"
+
+`include "apb_monitor.sv"
+`include "apb_driver.sv"
 endpackage: apb_agent_pkg
