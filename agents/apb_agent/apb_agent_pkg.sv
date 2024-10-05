@@ -29,4 +29,10 @@ import uvm_pkg::*;
 `include "apb_recorder.sv"
 
 `include "apb_agent.sv"
+
+`include "apb_sequences/apb_read_sequence.sv"
+`include "apb_sequences/apb_write_sequence.sv"
+`include "apb_sequences/apb_rand_write_sequence.sv"
+`include "apb_sequences/apb_rand_read_sequence.sv"
+`include "apb_sequences/apb_rand_sequence.sv"
 endpackage: apb_agent_pkg

@@ -23,6 +23,8 @@ bit has_functional_coverage = 0;
 bit has_scoreboard = 0;
 //
 int apb_index = 0; // Which PSEL is the monitor connected to
+bit [15:0] start_address[0:15];
+bit [15:0] range[0:15];
 
 //------------------------------------------
 // Methods
