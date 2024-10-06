@@ -7,7 +7,7 @@ import uvm_pkg::*;
 import env_pkg::*;
 import pmd901_agent_pkg::*;
 import apb_agent_pkg::*;
-import spi_bus_sequence_lib_pkg::*;
+import apb_bus_sequence_lib_pkg::*;
 import spi_reg_pkg::*;
 
 // testcases

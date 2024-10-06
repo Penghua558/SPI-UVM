@@ -22,7 +22,7 @@
 //
 // It uses the UVM register model
 //
-package spi_bus_sequence_lib_pkg;
+package apb_bus_sequence_lib_pkg;
 
 import uvm_pkg::*;
 `include "uvm_macros.svh"
@@ -30,42 +30,9 @@ import uvm_pkg::*;
 import spi_env_pkg::*;
 import spi_reg_pkg::*;
 
-// Base class that used by all the other sequences in the
-// package:
-//
-// Gets the handle to the register model - spi_rm
-//
-// Contains the data and status fields used by most register
-// access methods
-//
-class spi_bus_base_seq extends uvm_sequence #(uvm_sequence_item);
+`include "apb_bus_sequence_base.sv"
+`include "rand_speed_sequence.sv"
 
-  `uvm_object_utils(spi_bus_base_seq)
-
-  // SPI Register block
-  spi_reg_block spi_rb;
-
-  // SPI env configuration object (containing a register model handle)
-  spi_env_config m_cfg;
-
-  // Properties used by the various register access methods:
-  rand uvm_reg_data_t data;  // For passing data
-  uvm_status_e status;       // Returning access status
-
-  function new(string name = "spi_bus_base_seq");
-    super.new(name);
-  endfunction
-
-  // Common functionality:
-  // Getting a handle to the register model
-  task body;
-    if(m_cfg == null) begin
-      `uvm_fatal(get_full_name(), "spi_env_config is null")
-    end
-    spi_rb = m_cfg.spi_rb;
-  endtask: body
-
-endclass: spi_bus_base_seq
 
 //
 // Data load sequence:
@@ -363,4 +330,4 @@ class SPI_config_rand_order_seq extends spi_bus_base_seq;
 
 endclass: SPI_config_rand_order_seq
 
-endpackage: spi_bus_sequence_lib_pkg
+endpackage: apb_bus_sequence_lib_pkg
