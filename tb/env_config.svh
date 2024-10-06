@@ -39,6 +39,8 @@ localparam string s_my_config_type_error_id = "config type error";
 pmd901_agent_config m_pmd901_agent_cfg;
 apb_agent_config m_apb_agent_cfg;
 
+spi_reg_block spi_rb;
+
 //------------------------------------------
 // Methods
 //------------------------------------------

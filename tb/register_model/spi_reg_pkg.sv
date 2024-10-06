@@ -8,7 +8,7 @@
 // File            : spi_reg_pkg.sv
 //----------------------------------------------------------------------
 // Created by      : penghuachen
-// Creation Date   : 10/5/24 11:30 PM
+// Creation Date   : 10/6/24 4:37 PM
 //----------------------------------------------------------------------
 // Title           : register_model
 //
@@ -92,7 +92,7 @@ package spi_reg_pkg;
       `uvm_object_utils(fan_reg)
 
       uvm_reg_field reserved; 
-      rand uvm_reg_field close2overheat; 
+      uvm_reg_field close2overheat; 
 
 
       // Function: coverage
@@ -129,7 +129,7 @@ package spi_reg_pkg;
          close2overheat = uvm_reg_field::type_id::create("close2overheat");
 
          reserved.configure(this, 15, 1, "RO", 0, 15'b000000000000000, 1, 0, 0);
-         close2overheat.configure(this, 1, 0, "RW", 0, 1'b0, 1, 1, 0);
+         close2overheat.configure(this, 1, 0, "RO", 0, 1'b0, 1, 0, 0);
       endfunction
    endclass
 
@@ -145,7 +145,7 @@ package spi_reg_pkg;
       `uvm_object_utils(fault_reg)
 
       uvm_reg_field reserved; 
-      rand uvm_reg_field motor_error; 
+      uvm_reg_field motor_error; 
 
 
       // Function: coverage
@@ -182,7 +182,7 @@ package spi_reg_pkg;
          motor_error = uvm_reg_field::type_id::create("motor_error");
 
          reserved.configure(this, 15, 1, "RO", 0, 15'b000000000000000, 1, 0, 0);
-         motor_error.configure(this, 1, 0, "RW", 0, 1'b0, 1, 1, 0);
+         motor_error.configure(this, 1, 0, "RO", 0, 1'b0, 1, 0, 0);
       endfunction
    endclass
 
@@ -280,7 +280,7 @@ package spi_reg_pkg;
       `uvm_object_utils(ready_reg)
 
       uvm_reg_field reserved; 
-      rand uvm_reg_field overheat; 
+      uvm_reg_field overheat; 
 
 
       // Function: coverage
@@ -317,7 +317,7 @@ package spi_reg_pkg;
          overheat = uvm_reg_field::type_id::create("overheat");
 
          reserved.configure(this, 15, 1, "RO", 0, 15'b000000000000000, 1, 0, 0);
-         overheat.configure(this, 1, 0, "RW", 0, 1'b0, 1, 1, 0);
+         overheat.configure(this, 1, 0, "RO", 0, 1'b0, 1, 0, 0);
       endfunction
    endclass
 

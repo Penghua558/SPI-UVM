@@ -32,6 +32,8 @@ import spi_reg_pkg::*;
 // Includes:
 `include "env_config.svh"
 `include "env.svh"
+
+// testcases
 `include "test.sv"
 
 endpackage: env_pkg

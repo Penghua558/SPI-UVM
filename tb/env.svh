@@ -33,6 +33,8 @@ pmd901_agent m_pmd901_agent;
 apb_agent m_apb_agent;
 
 reg2apb_adapter m_reg2apb;
+// Register predictor
+uvm_reg_predictor#(apb_trans) m_apb2reg_predictor;
 env_config m_cfg;
 
 // Standard UVM Methods:
@@ -50,7 +52,9 @@ function void env::build_phase(uvm_phase phase);
     m_cfg = env_config::get_config(this);
     m_pmd901_agent = pmd901_agent::type_id::create("m_pmd901_agent", this);
     m_apb_agent = apb_agent::type_id::create("m_apb_agent", this);
-    
+
+    m_apb2reg_predictor = uvm_reg_predictor#(apb_trans)::type_id::create(
+        "m_apb2reg_predictor", this);
     m_reg2apb = reg2apb_adapter::type_id::create("m_reg2apb");
 endfunction:build_phase
 
