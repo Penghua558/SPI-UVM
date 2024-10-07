@@ -1,10 +1,10 @@
+import apb_agent_dec::*;
 class apb_rand_sequence extends uvm_sequence #(apb_trans);
 
 // UVM Factory Registration Macro
 //
 `uvm_object_utils(apb_rand_sequence)
 
-import apb_agent_dec::*;
 
 //------------------------------------------
 // Data Members (Outputs rand, inputs non-rand)

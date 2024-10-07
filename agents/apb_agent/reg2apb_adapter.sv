@@ -24,12 +24,13 @@
 //----------------------------------------------------------------------
 // reg2apb_adapter
 //----------------------------------------------------------------------
+import apb_agent_dec::*;
+
 class reg2apb_adapter extends uvm_reg_adapter;
 
   // factory registration macro
   `uvm_object_utils(reg2apb_adapter)
 
-  import apb_agent_dec::*;
 
   //--------------------------------------------------------------------
   // new
@@ -54,12 +55,12 @@ class reg2apb_adapter extends uvm_reg_adapter;
   //--------------------------------------------------------------------
   // reg2bus
   //--------------------------------------------------------------------
-  virtual function uvm_sequence_item reg2bus(uvm_reg_bus_op rw);
+  virtual function uvm_sequence_item reg2bus(const ref uvm_reg_bus_op rw);
 
     apb_trans trans_h = apb_trans::type_id::create("trans_h");
 
     assert(trans_h.randomize() with{
-        wr = (rw.kind == UVM_READ) ? READ : WRITE;
+        wr == (rw.kind == UVM_READ) ? READ : WRITE;
         addr == rw.addr;
         wdata == rw.data;
     });
@@ -70,7 +71,7 @@ class reg2apb_adapter extends uvm_reg_adapter;
   // bus2reg
   //--------------------------------------------------------------------
   virtual function void bus2reg(uvm_sequence_item bus_item,
-                                uvm_reg_bus_op rw);
+                                ref uvm_reg_bus_op rw);
     apb_trans trans_h;
     if (!$cast(trans_h, bus_item)) begin
       `uvm_fatal("NOT_BUS_TYPE","Provided bus_item is not of the correct type")

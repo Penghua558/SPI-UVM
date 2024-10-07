@@ -10,7 +10,7 @@ localparam string s_my_config_type_error_id = "config type error";
 
 // BFM Virtual Interfaces
 virtual apb_monitor_bfm mon_bfm;
-virtual apb_driver_bfm  drv_bfm;
+virtual apb_driver_bfm drv_bfm;
 
 //------------------------------------------
 // Data Members
@@ -40,8 +40,8 @@ function apb_agent_config::new(string name = "apb_agent_config");
   super.new(name);
 endfunction
 
-task wait_for_reset();
-    drv_bfm.wait_for_reset();
+task apb_agent_config::wait_for_reset();
+    mon_bfm.wait_for_reset();
 endtask
 
 //

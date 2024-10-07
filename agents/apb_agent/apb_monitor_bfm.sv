@@ -60,6 +60,7 @@ endtask
 task run();
   apb_trans item;
   apb_trans cloned_item;
+  apb_agent_dec::op_e op;
 
   item = apb_trans::type_id::create("item");
 
@@ -70,7 +71,8 @@ task run();
       // Assign the relevant values to the analysis item fields
       begin
         item.addr = PADDR;
-        item.wr = PWRITE;
+        $cast(op, PWRITE);
+        item.wr = op;
         if(PWRITE)
             item.wdata = PWDATA;
         else

@@ -1,10 +1,10 @@
+import apb_agent_dec::*;
 class apb_read_sequence extends uvm_sequence #(apb_trans);
 
 // UVM Factory Registration Macro
 //
 `uvm_object_utils(apb_read_sequence)
 
-import apb_agent_dec::*;
 
 //------------------------------------------
 // Data Members (Outputs rand, inputs non-rand)
@@ -48,7 +48,7 @@ task apb_read_sequence::body;
     end
 endtask:body
 
-task read(bit[15:0] addr, uvm_sequencer_base seqr, 
+task apb_read_sequence::read(bit[15:0] addr, uvm_sequencer_base seqr, 
     uvm_sequencer_base parent = null);
     this.addr = addr;
     this.start(seqr, parent);

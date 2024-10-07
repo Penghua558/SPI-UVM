@@ -63,13 +63,13 @@ endfunction: set_apb_index
 
 function bit is_addr_legal(logic [15:0] address);
     if (address >= m_cfg.start_address[apb_index] &&
-        address <= m_cfg.start_address[apb_index] + m_cfg.range[i])
+        address <= m_cfg.start_address[apb_index] + m_cfg.range[apb_index])
         return 1;
     else
         return 0;
 endfunction
 
-task drive (apb_seq_item req);
+task drive(apb_trans req);
     int apb_index;
 
     repeat(req.delay)

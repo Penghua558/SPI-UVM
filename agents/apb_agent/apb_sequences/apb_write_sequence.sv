@@ -1,10 +1,10 @@
+import apb_agent_dec::*;
 class apb_write_sequence extends uvm_sequence #(apb_trans);
 
 // UVM Factory Registration Macro
 //
 `uvm_object_utils(apb_write_sequence)
 
-import apb_agent_dec::*;
 
 //------------------------------------------
 // Data Members (Outputs rand, inputs non-rand)
@@ -48,8 +48,8 @@ task apb_write_sequence::body;
     end
 endtask:body
 
-task write(bit [15:0] addr, bit [15:0] data, uvm_sequencer_base seqr, 
-    uvm_sequencer_base parent = null);
+task apb_write_sequence::write(bit [15:0] addr, bit [15:0] data, 
+    uvm_sequencer_base seqr, uvm_sequencer_base parent = null);
     this.addr = addr;
     this.data = data;
     this.start(seqr, parent);
