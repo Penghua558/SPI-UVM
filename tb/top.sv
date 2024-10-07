@@ -2,6 +2,7 @@ module top;
 
 import uvm_pkg::*;
 import env_pkg::*;
+import testcase_lib_pkg::*;
 
 // PCLK and PRESETn
 //

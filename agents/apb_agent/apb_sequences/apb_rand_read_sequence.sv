@@ -24,7 +24,7 @@ logic [15:0] data;
 // Standard UVM Methods:
 extern function new(string name = "apb_rand_read_sequence");
 extern task body;
-extern task read(uvm_sequencer_base seqr, uvm_sequencer_base parent = null);
+extern task read(uvm_sequencer_base seqr, uvm_sequence_base parent = null);
 
 endclass:apb_rand_read_sequence
 
@@ -50,6 +50,6 @@ task apb_rand_read_sequence::body;
 endtask:body
 
 task apb_rand_read_sequence::read(uvm_sequencer_base seqr, 
-    uvm_sequencer_base parent = null);
+    uvm_sequence_base parent = null);
     this.start(seqr, parent);
 endtask

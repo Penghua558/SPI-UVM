@@ -23,7 +23,7 @@ class apb_rand_write_sequence extends uvm_sequence #(apb_trans);
 // Standard UVM Methods:
 extern function new(string name = "apb_rand_write_sequence");
 extern task body;
-extern task write(uvm_sequencer_base seqr, uvm_sequencer_base parent = null);
+extern task write(uvm_sequencer_base seqr, uvm_sequence_base parent = null);
 
 endclass:apb_rand_write_sequence
 
@@ -48,6 +48,6 @@ task apb_rand_write_sequence::body;
 endtask:body
 
 task apb_rand_write_sequence::write(uvm_sequencer_base seqr, 
-    uvm_sequencer_base parent = null);
+    uvm_sequence_base parent = null);
     this.start(seqr, parent);
 endtask

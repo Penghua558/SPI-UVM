@@ -26,7 +26,7 @@ logic [15:0] data;
 extern function new(string name = "apb_write_sequence");
 extern task body;
 extern task write(bit [15:0] addr, bit [15:0] data, uvm_sequencer_base seqr, 
-    uvm_sequencer_base parent = null);
+    uvm_sequence_base parent = null);
 
 endclass:apb_write_sequence
 
@@ -49,7 +49,7 @@ task apb_write_sequence::body;
 endtask:body
 
 task apb_write_sequence::write(bit [15:0] addr, bit [15:0] data, 
-    uvm_sequencer_base seqr, uvm_sequencer_base parent = null);
+    uvm_sequencer_base seqr, uvm_sequence_base parent = null);
     this.addr = addr;
     this.data = data;
     this.start(seqr, parent);

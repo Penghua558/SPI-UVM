@@ -26,7 +26,7 @@ logic [15:0] addr;
 extern function new(string name = "apb_read_sequence");
 extern task body;
 extern task read(bit[15:0] addr, uvm_sequencer_base seqr, 
-    uvm_sequencer_base parent = null);
+    uvm_sequence_base parent = null);
 
 endclass:apb_read_sequence
 
@@ -49,7 +49,7 @@ task apb_read_sequence::body;
 endtask:body
 
 task apb_read_sequence::read(bit[15:0] addr, uvm_sequencer_base seqr, 
-    uvm_sequencer_base parent = null);
+    uvm_sequence_base parent = null);
     this.addr = addr;
     this.start(seqr, parent);
 endtask

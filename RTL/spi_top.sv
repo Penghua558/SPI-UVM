@@ -55,7 +55,7 @@ wire [15:0] motor_speed;
 wire [15:0] reg_addr;
 wire [15:0] reg_wdata;
 wire [15:0] reg_rdata;
-wire [15:0] reg_wr;
+wire reg_wr;
 
 spi_clgen clgen (
 .clk_in(PCLK), 
