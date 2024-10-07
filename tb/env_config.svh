@@ -45,16 +45,18 @@ spi_reg_block spi_rb;
 // Methods
 //------------------------------------------
 extern static function env_config get_config( uvm_component c);
+extern task wait_for_reset();
 extern function new(string name = "env_config");
 
 endclass: env_config
 
 function env_config::new(string name = "env_config");
   super.new(name);
-  m_pmd901_agent_cfg = pmd901_agent_config::type_id::create(
+    m_pmd901_agent_cfg = pmd901_agent_config::type_id::create(
       "m_pmd901_agent_cfg");
-  m_apb_agent_cfg = apb_agent_config::type_id::create(
+    m_apb_agent_cfg = apb_agent_config::type_id::create(
       "m_apb_agent_cfg");
+    spi_rb = spi_reg_block::type_id::create("spi_rb");
 endfunction
 
 //
@@ -85,5 +87,9 @@ function env_config env_config::get_config( uvm_component c );
 
   return t;
 endfunction
+
+task env_config::wait_for_reset();
+    m_apb_agent_cfg.wait_for_reset();
+endtask
 
 `endif // env_config

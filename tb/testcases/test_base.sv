@@ -28,7 +28,7 @@ extern function void configure_apb_agent(apb_agent_config cfg);
 // Standard UVM Methods:
 extern function new(string name = "test_base", uvm_component parent = null);
 extern function void build_phase(uvm_phase phase);
-extern task  main_phase(uvm_phase phase);
+extern function void set_sequencers(test_vseq_base seq);
 
 endclass: test_base
 
@@ -41,6 +41,11 @@ endfunction
 function void test_base::build_phase(uvm_phase phase);
   // env configuration
   m_env_cfg = env_config::type_id::create("m_env_cfg");
+  // Register model
+  // Enable all types of coverage available in the register model
+  uvm_reg::include_coverage("*", UVM_CVR_ALL);
+  // Create the register model:
+  m_env_cfg.spi_rb.build();
 
   configure_pmd901_agent(m_env_cfg.m_pmd901_agent_cfg);
   configure_apb_agent(m_env_cfg.m_apb_agent_cfg);
@@ -83,7 +88,14 @@ endfunction: configure_pmd901_agent
 
 function void test_base::configure_apb_agent(apb_agent_config cfg);
   cfg.active = UVM_ACTIVE;
-  cfg.apb_index = 1;
+  cfg.apb_index = 0;
   cfg.start_address[0] = 16'd0;
-  cfg.range[0] = 16'd5;
+  cfg.range[0] = 16'd10;
 endfunction: configure_apb_agent
+
+function void test_base::set_sequencers(test_vseq_base seq);
+  seq.m_cfg = m_env_cfg;
+
+//  seq.apb = m_env.m_apb_agent.m_sequencer;
+  seq.pmd901_sequencer_h = m_env.m_pmd901_agent.m_sequencer;
+endfunction

@@ -77,7 +77,7 @@ spi_top#(
 ) DUT(
     .PCLK(PCLK),
     .PRESETn(PRESETn),
-    .PSEL(u_apb_if.PSEL),
+    .PSEL(u_apb_if.PSEL[0]),
     .PENABLE(u_apb_if.PENABLE),
     .PWRITE(u_apb_if.PWRITE),
     .PADDR(u_apb_if.PADDR),
