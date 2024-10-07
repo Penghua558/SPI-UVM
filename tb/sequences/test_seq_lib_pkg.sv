@@ -22,7 +22,7 @@ package test_seq_lib_pkg;
 import uvm_pkg::*;
 `include "uvm_macros.svh"
 
-import spi_agent_pkg::*;
+import pmd901_agent_pkg::*;
 import env_pkg::*;
 import apb_bus_sequence_lib_pkg::*;
 

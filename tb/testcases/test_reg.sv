@@ -1,5 +1,5 @@
 // Class Description:
-class test_reg extends uvm_test;
+class test_reg extends test_base;
 
 // UVM Factory Registration Macro
 //
@@ -40,13 +40,11 @@ task test_reg::run_phase(uvm_phase phase);
     super.run_phase(phase);
     set_sequencers(t_seq);
     phase.raise_objection(this, "Test started");
-    m_cfg.wait_for_reset();
+    m_env_cfg.wait_for_reset();
     t_seq.start(null);  
     #100ns;
     phase.drop_objection(this, "Test finished");
 endtask
-
-endfunction
 
 function void test_reg::report_phase(uvm_phase phase);   
    uvm_coreservice_t cs_;

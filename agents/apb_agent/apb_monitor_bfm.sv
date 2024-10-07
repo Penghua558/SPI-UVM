@@ -33,6 +33,8 @@ interface apb_monitor_bfm (
   input logic PREADY
 );
 
+`include "uvm_macros.svh"
+import uvm_pkg::*;
 import apb_agent_pkg::*;
 
 //------------------------------------------
@@ -71,7 +73,8 @@ task run();
       // Assign the relevant values to the analysis item fields
       begin
         item.addr = PADDR;
-        $cast(op, PWRITE);
+        if(!$cast(op, PWRITE))
+            `uvm_fatal("APB MONITOR BFM", "failed to convert PWRITE to op_e")
         item.wr = op;
         if(PWRITE)
             item.wdata = PWDATA;
