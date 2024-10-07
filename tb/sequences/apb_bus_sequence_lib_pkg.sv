@@ -27,7 +27,7 @@ package apb_bus_sequence_lib_pkg;
 import uvm_pkg::*;
 `include "uvm_macros.svh"
 
-import spi_env_pkg::*;
+import env_pkg::*;
 import spi_reg_pkg::*;
 
 `include "apb_bus_sequence_base.sv"
