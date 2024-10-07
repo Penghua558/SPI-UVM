@@ -1,3 +1,4 @@
+// randomly configures register motor_speed
 class rand_speed_sequence extends apb_bus_sequence_base;
 
   `uvm_object_utils(rand_speed_sequence)
