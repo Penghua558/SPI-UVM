@@ -121,7 +121,7 @@ initial begin
   forever #10ns PCLK = ~PCLK;
 end
 initial begin
-  PRESETn = 1;
+  PRESETn = 0;
   repeat(4) @(posedge PCLK);
   PRESETn = 0;
   repeat(4) @(posedge PCLK);

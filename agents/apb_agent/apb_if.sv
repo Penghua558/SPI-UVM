@@ -49,8 +49,8 @@ logic PREADY;
 import uvm_pkg::*;
 
 property psel_valid;
-    @(posedge PCLK) disable iff (PRESETn == 1'b0)
-    !$isunknown(PSEL);
+    disable iff (!PRESETn == 1'b0)
+    @(posedge PCLK) !$isunknown(PSEL);
 endproperty: psel_valid
 
 // PADDR should remain stable once PSEL is asserted
