@@ -76,10 +76,13 @@ task run();
         if(!$cast(op, PWRITE))
             `uvm_fatal("APB MONITOR BFM", "failed to convert PWRITE to op_e")
         item.wr = op;
-        if(PWRITE)
+        if(PWRITE) begin
             item.wdata = PWDATA;
-        else
+            item.rdata = 16'd0;
+        end else begin
             item.rdata = PRDATA;
+            item.wdata = 16'd0;
+        end
         // Clone and publish the cloned item to the subscribers
         $cast(cloned_item, item.clone());
         proxy.notify_transaction(cloned_item);

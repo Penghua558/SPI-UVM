@@ -38,7 +38,7 @@ GetOptions ("help" => \$help,
             "version" => \$version,
             "com" => \$compile,
             "rtlcom" => \$rtl_compile,
-            "envom" => $env_compile,
+            "envcom" => \$env_compile,
             "sim=s" => \$simulation,
             "run=s" => \$com_n_sim,
             "seed=i" => \$seed,
@@ -67,7 +67,7 @@ if($compile){
 }
 
 if($rtl_compile){
-    system("make rtl_build");
+    system("make work");
     my $compile_cmd = "make rtl_build".&pass_compile_args;
     system($compile_cmd);
     print("===================================\n");
@@ -76,7 +76,7 @@ if($rtl_compile){
 }
 
 if($env_compile){
-    system("make env_build");
+    system("make work");
     my $compile_cmd = "make env_build".&pass_compile_args;
     system($compile_cmd);
     print("===================================\n");

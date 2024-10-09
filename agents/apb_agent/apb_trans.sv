@@ -81,12 +81,6 @@ function void apb_trans::do_print(uvm_printer printer);
 endfunction:do_print
 
 function void apb_trans:: do_record(uvm_recorder recorder);
-  super.do_record(recorder);
-
-  // Use the record macros to record the item fields:
-  `uvm_record_field("addr", addr)
-  `uvm_record_field("wdata", wdata)
-  `uvm_record_field("wr", wr)
-  `uvm_record_field("delay", delay)
-  `uvm_record_field("rdata", rdata)
+    super.do_record(recorder);
+    `uvm_record_string("apb_trans", this.sprint()) 
 endfunction:do_record

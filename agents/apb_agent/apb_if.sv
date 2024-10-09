@@ -56,19 +56,19 @@ endproperty: psel_valid
 // PADDR should remain stable once PSEL is asserted
 property paddr_stable;
     disable iff (!PRESETn)
-    @(posedge PCLK) PSEL |-> ($stable(PADDR) until_with !PSEL);
+    @(posedge PCLK) PSEL |=> ($stable(PADDR) until_with !PSEL);
 endproperty
 
 // PWRITE should remain stable once PSEL is asserted
 property pwrite_stable;
     disable iff (!PRESETn)
-    @(posedge PCLK) PSEL |-> ($stable(PWRITE) until_with !PSEL);
+    @(posedge PCLK) PSEL |=> ($stable(PWRITE) until_with !PSEL);
 endproperty
 
 // PWDATA should remain stable once PSEL is asserted
 property pwdata_stable;
     disable iff (!PRESETn)
-    @(posedge PCLK) PSEL |-> ($stable(PWDATA) until_with !PSEL);
+    @(posedge PCLK) PSEL |=> ($stable(PWDATA) until_with !PSEL);
 endproperty
 
 assert property (psel_valid)
