@@ -47,16 +47,22 @@ always@(posedge PCLK or negedge PRESETn) begin
                 PRDATA <= {DATA_WIDTH{1'b0}};
 
                 o_wr <= 1'b0;
-                o_addr <= {ADDR_WIDTH{1'b0}};
+                o_addr <= PADDR;
                 o_wdata <= {DATA_WIDTH{1'b0}};
             end
             SETUP: begin
                 PREADY <= 1'b0;
                 PRDATA <= {DATA_WIDTH{1'b0}};
 
-                o_wr <= 1'b0;
+                o_wr <= PWRITE;
                 o_addr <= PADDR;
-                o_wdata <= {DATA_WIDTH{1'b0}};
+                if(PWRITE) begin
+                    o_wdata <= PWDATA;
+                    PRDATA <= {DATA_WIDTH{1'b0}};
+                end else begin
+                    PRDATA <= i_rdata;
+                    o_wdata <= {DATA_WIDTH{1'b0}};
+                end
             end
             ACCESS: begin
                 PREADY <= 1'b1;
