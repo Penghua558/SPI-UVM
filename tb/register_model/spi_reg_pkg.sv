@@ -8,7 +8,7 @@
 // File            : spi_reg_pkg.sv
 //----------------------------------------------------------------------
 // Created by      : penghuachen
-// Creation Date   : 10/10/24 12:18 AM
+// Creation Date   : 10/11/24 12:35 AM
 //----------------------------------------------------------------------
 // Title           : register_model
 //
@@ -211,7 +211,7 @@ package spi_reg_pkg;
       // 
       virtual function void build();
          F = uvm_reg_field::type_id::create("F");
-         F.configure(this, 16, 0, "RW", 1, 16'h0100, 1, 1, 1);
+         F.configure(this, 16, 0, "RW", 0, 16'h0100, 1, 1, 1);
       endfunction
    endclass
 

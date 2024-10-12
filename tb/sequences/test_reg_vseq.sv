@@ -24,7 +24,7 @@ class test_reg_vseq extends test_vseq_base;
     // register reset value test
     rst_seq.start(m_sequencer);
     // register read/write test
-    bash_seq.start(m_sequencer); 
+    bash_seq.start(m_sequencer);
   endtask: body
 
 endclass: test_reg_vseq

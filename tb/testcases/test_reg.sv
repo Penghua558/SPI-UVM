@@ -41,6 +41,7 @@ task test_reg::run_phase(uvm_phase phase);
     set_sequencers(t_seq);
     phase.raise_objection(this, "Test started");
     m_env_cfg.wait_for_reset();
+    m_env_cfg.spi_rb.reset();
     `uvm_info("TEST", "DUT reset completed", UVM_MEDIUM)
     t_seq.start(null);  
     #100ns;
