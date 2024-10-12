@@ -10,10 +10,10 @@ class rand_speed_sequence extends apb_bus_sequence_base;
   task body;
     super.body;
 
-    assert(spi_rb.motor_speed.randomize());
-    spi_rb.motor_speed.update(status, .path(UVM_FRONTDOOR), .parent(this));
+    assert(spi_rb.MOTORSPD.randomize());
+    spi_rb.MOTORSPD.update(status, .path(UVM_FRONTDOOR), .parent(this));
     // Get the desired motor speed
-    data = spi_rb.motor_speed.get();
+    data = spi_rb.MOTORSPD.get();
   endtask: body
 
 endclass: rand_speed_sequence

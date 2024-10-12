@@ -64,7 +64,7 @@ function void env::connect_phase(uvm_phase phase);
     // sequencer and predictor
     if(m_cfg.spi_rb.get_parent() == null) begin
         if(m_cfg.m_apb_agent_cfg.active == UVM_ACTIVE) begin
-          m_cfg.spi_rb.spi_reg_block_map.set_sequencer(
+          m_cfg.spi_rb.default_map.set_sequencer(
               m_apb_agent.m_sequencer, m_reg2apb);
         end
 
@@ -74,11 +74,11 @@ function void env::connect_phase(uvm_phase phase);
         // Replacing implicit register model prediction with explicit prediction
         // based on APB bus activity observed by the APB agent monitor
         // Set the predictor map:
-        m_apb2reg_predictor.map = m_cfg.spi_rb.spi_reg_block_map;
+        m_apb2reg_predictor.map = m_cfg.spi_rb.default_map;
         // Set the predictor adapter:
         m_apb2reg_predictor.adapter = m_reg2apb;
         // Disable the register models auto-prediction
-        m_cfg.spi_rb.spi_reg_block_map.set_auto_predict(0);
+        m_cfg.spi_rb.default_map.set_auto_predict(0);
         // Connect the predictor to the bus agent monitor analysis port
         m_apb_agent.ap.connect(m_apb2reg_predictor.bus_in);
     end

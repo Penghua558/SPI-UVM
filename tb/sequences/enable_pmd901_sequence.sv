@@ -11,7 +11,7 @@ class enable_pmd901_sequence extends apb_bus_sequence_base;
     super.body;
 
     data[15:0] = 16'd1;
-    spi_rb.park.write(status, data, .path(UVM_FRONTDOOR), .parent(this));
+    spi_rb.PARK.write(status, data, .path(UVM_FRONTDOOR), .parent(this));
   endtask: body
 
 endclass: enable_pmd901_sequence

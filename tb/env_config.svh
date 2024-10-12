@@ -39,7 +39,7 @@ localparam string s_my_config_type_error_id = "config type error";
 pmd901_agent_config m_pmd901_agent_cfg;
 apb_agent_config m_apb_agent_cfg;
 
-spi_reg_block spi_rb;
+spi_reg spi_rb;
 
 //------------------------------------------
 // Methods
@@ -56,7 +56,7 @@ function env_config::new(string name = "env_config");
       "m_pmd901_agent_cfg");
     m_apb_agent_cfg = apb_agent_config::type_id::create(
       "m_apb_agent_cfg");
-    spi_rb = spi_reg_block::type_id::create("spi_rb");
+    spi_rb = spi_reg::type_id::create("spi_rb");
 endfunction
 
 //

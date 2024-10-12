@@ -39,7 +39,7 @@ assign o_bending = bending;
 always@(posedge clk or negedge rstn) begin
     if (!rstn) begin
         o_rdata <= 16'd0;
-        motor_speed <= 16'h10;
+        motor_speed <= 16'h100;
         park <= 1'b0;
         bending <= 1'b0;
     end else begin

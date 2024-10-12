@@ -11,7 +11,7 @@ class apb_bus_sequence_base extends uvm_sequence #(uvm_sequence_item);
   `uvm_object_utils(apb_bus_sequence_base)
 
   // SPI Register block
-  spi_reg_block spi_rb;
+  spi_reg spi_rb;
 
   // SPI env configuration object (containing a register model handle)
   env_config m_cfg;

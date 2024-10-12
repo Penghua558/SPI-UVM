@@ -10,8 +10,8 @@ class rand_control_sequence extends apb_bus_sequence_base;
   task body;
     super.body;
 
-    assert(spi_rb.motor_speed.randomize());
-    assert(spi_rb.bending.randomize());
+    assert(spi_rb.MOTORSPD.randomize());
+    assert(spi_rb.BENDING.randomize());
     spi_rb.update(status, .path(UVM_FRONTDOOR), .parent(this));
   endtask: body
 
