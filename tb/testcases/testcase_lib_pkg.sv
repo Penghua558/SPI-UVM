@@ -14,5 +14,6 @@ import spi_reg_pkg::*;
 // testcases
 `include "test_base.sv"
 `include "test_reg.sv"
+`include "test_randspd.sv"
 
 endpackage: testcase_lib_pkg

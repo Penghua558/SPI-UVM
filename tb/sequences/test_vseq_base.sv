@@ -40,14 +40,21 @@ class test_vseq_base extends uvm_sequence #(uvm_sequence_item);
 
   // This set up is required for child sequences to run
   task body;
+    pmd901_sequence pmd901_seq = pmd901_sequence::type_id::create("pmd901_seq");
+
     if(pmd901_sequencer_h==null) begin
-      `uvm_fatal("SEQ_ERROR", "Sequencer handle is null")
+      `uvm_fatal("SEQ_ERROR", "PMD901 sequencer handle is null")
     end
 
     if(m_cfg==null) begin
       `uvm_fatal("CFG_ERROR", "Configuration handle is null")
     end
 
+    fork
+        forever begin
+            pmd901_seq.start(pmd901_sequencer_h);
+        end
+    join_none
   endtask: body
 
   function void apb_bus_seq_set_cfg(apb_bus_sequence_base seq_);

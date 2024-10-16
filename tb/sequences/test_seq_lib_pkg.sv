@@ -28,5 +28,6 @@ import apb_bus_sequence_lib_pkg::*;
 
 `include "test_vseq_base.sv"
 `include "test_reg_vseq.sv"
+`include "test_randspd_vseq.sv"
 
 endpackage:test_seq_lib_pkg

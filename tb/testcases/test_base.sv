@@ -96,6 +96,5 @@ endfunction: configure_apb_agent
 function void test_base::set_sequencers(test_vseq_base seq);
   seq.m_cfg = m_env_cfg;
 
-//  seq.apb = m_env.m_apb_agent.m_sequencer;
   seq.pmd901_sequencer_h = m_env.m_pmd901_agent.m_sequencer;
 endfunction
