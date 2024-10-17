@@ -155,8 +155,6 @@ package spi_reg_pkg;
 
             this.READY.build();
             this.default_map.add_reg(this.READY, 'ha);
-
-            lock_model();
         endfunction : build
     endclass : spi_reg
 

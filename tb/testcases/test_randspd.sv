@@ -24,7 +24,8 @@ extern function void report_phase(uvm_phase phase);
 
 endclass: test_randspd
 
-function test_randspd::new(string name = "test_randspd", uvm_component parent = null);
+function test_randspd::new(string name = "test_randspd", 
+    uvm_component parent = null);
   super.new(name, parent);
 endfunction
 
@@ -48,7 +49,7 @@ task test_randspd::run_phase(uvm_phase phase);
     phase.drop_objection(this, "Test finished");
 endtask
 
-function void test_randspd::report_phase(uvm_phase phase);   
+function void test_randspd::report_phase(uvm_phase phase);
    uvm_coreservice_t cs_;
    uvm_report_server svr;
 

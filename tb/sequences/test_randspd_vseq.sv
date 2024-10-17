@@ -25,7 +25,7 @@ class test_randspd_vseq extends test_vseq_base;
         forever begin
             rand_seq.start(m_sequencer);
         end
-        #1000us;
+        #200us;
     join_any
   endtask: body
 

@@ -46,6 +46,7 @@ function void test_base::build_phase(uvm_phase phase);
   uvm_reg::include_coverage("*", UVM_CVR_ALL);
   // Create the register model:
   m_env_cfg.spi_rb.build();
+  m_env_cfg.spi_rb.lock_model();
 
   configure_pmd901_agent(m_env_cfg.m_pmd901_agent_cfg);
   configure_apb_agent(m_env_cfg.m_apb_agent_cfg);
